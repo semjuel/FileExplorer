@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import './styles.css';
-import Header from '../Header';
-import Navbar from '../Navbar';
-import Subbar from '../Subbar';
+import { Header } from '../Header';
+import { Navbar } from '../Navbar';
+import { Subbar } from '../Subbar';
 
 class App extends Component {
   render() {

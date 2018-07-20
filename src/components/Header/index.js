@@ -1,14 +1,19 @@
 import React, { Component } from 'react';
 import './styles.css';
 
-class Header extends Component {
+import { Logo } from '../Logo';
+import { Search } from './Search';
+import { FolderSettings } from '../FolderSettings';
+
+export class Header extends Component {
   render() {
     return (
       <header className="header">
-        header
+        <Logo />
+        <Search />
+
+        <FolderSettings />
       </header>
-    )
+    );
   }
 }
-
-export default Header;
