@@ -19,12 +19,8 @@ export class Header extends Component {
           </div>
         </div>
         <div className="header__part">
-          <div className="header__folder-settings">
-            <FolderSettings />
-          </div>
-          <div className="header__app-settings">
-            <AppSettings />
-          </div>
+          <FolderSettings />
+          <AppSettings />
         </div>
       </header>
     );

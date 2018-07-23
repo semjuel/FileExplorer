@@ -4,8 +4,16 @@ import './styles.css';
 export class AppSettings extends Component {
   render() {
     return(
-      <div>
-        AppSettings
+      <div className="app-settings">
+        <button>
+          1
+        </button>
+        <button>
+          2
+        </button>
+        <button>
+          3 
+        </button>
       </div>
     );
   }

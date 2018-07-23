@@ -13,7 +13,23 @@
 
   box-shadow: $box-shadow;
 
-  &__part{
+  // left & right sides default
+  &__part {
     display: flex;
+  }
+
+  // logo
+  &__logo {
+
+    min-width: 300px;
+    padding: {
+      left: 50px;
+      right: 50px;
+    }
+  }
+
+  // search
+  &__search {
+    padding-left: 25px;
   }
 }

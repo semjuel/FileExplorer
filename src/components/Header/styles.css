@@ -9,3 +9,9 @@
   box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2); }
   .header__part {
     display: flex; }
+  .header__logo {
+    min-width: 300px;
+    padding-left: 50px;
+    padding-right: 50px; }
+  .header__search {
+    padding-left: 25px; }
