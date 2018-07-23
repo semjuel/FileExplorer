@@ -1,5 +1,9 @@
 @import "./../../scss/_variables.scss";
 
 .header {
-  height: 100px;
+  height: 80px;
+  position: relative;
+  z-index: 5;
+
+  box-shadow: $box-shadow;
 }
