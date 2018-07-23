@@ -8,6 +8,10 @@ body{
   color: $primary-text-color;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 .app {
   min-height: 100vh;
 

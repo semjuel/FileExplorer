@@ -2,7 +2,7 @@ import React from 'react';
 import './styles.css';
 
 export const Logo = () => (
-  <div>
+  <div className="logo">
     logo
   </div>
 );
