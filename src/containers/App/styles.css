@@ -4,10 +4,9 @@
   flex-direction: column; }
 
 .main {
-  background-color: #f4f4f4;
   display: flex;
   flex-grow: 1; }
 
 .layout {
   flex-grow: 1;
-  background-color: #b3b3b3; }
+  background-color: #ebf2f7; }
