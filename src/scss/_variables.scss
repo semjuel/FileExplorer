@@ -1,11 +1,15 @@
 $primary-color: #396afc;
+$secondary-color: #dae7f0;
+
 $primary-text-color: #222222;
 $secondary-text-color: #70818c;
-$secondary-color: #dae7f0;
+
 $secondary-color-1: #ebf2f7;
 $secondary-color-2: #d1dde6;
 
+$color-night: #000;
+
 $font: 'Roboto', sans-serif;
 
-$box-shadow: 0 0 20px 0 rgba(0,0,0, .2);
-$box-shadow-1: 0 0 10px 0 rgba(0,0,0, .2); 
+$box-shadow: 0 0 20px 0 rgba($color-night, .2);
+$box-shadow-1: 0 0 10px 0 rgba($color-night, .2); 
