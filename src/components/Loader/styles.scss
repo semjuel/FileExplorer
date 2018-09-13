@@ -1,0 +1,23 @@
+@import '../../scss/_variables.scss';
+
+.loader{
+  position: fixed;
+  top: 0; left: 0;
+  z-index: $zIndex-5;
+
+  width: 100%;
+  height: $loader-height;
+
+  background-color: $secondary-color-2;
+
+  &__progress{
+    width: 50%;
+    height: 100%;
+    border: {
+      top-right-radius: 2px;
+      bottom-right-radius: 2px;
+    }
+
+    background-color: $primary-color;
+  }
+}

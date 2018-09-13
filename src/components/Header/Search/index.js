@@ -2,7 +2,8 @@ import React from 'react';
 import './styles.css';
 
 export const Search = () => (
-  <div>
-    header search
-  </div>
+  <form className="search">
+    <input type="text" className="search__field" />
+    <input type="submit" className="search__button" />
+  </form>
 );
