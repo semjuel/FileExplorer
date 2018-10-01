@@ -1,0 +1,11 @@
+.notification--default {
+  background-color: #dae7f0; }
+
+.notification--success {
+  background-color: #69c75c; }
+
+.notification--warning {
+  background-color: #eaba1c; }
+
+.notification--error {
+  background-color: #df4949; }

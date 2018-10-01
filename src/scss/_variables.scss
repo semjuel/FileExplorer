@@ -1,5 +1,5 @@
 // ==
-// Colors
+// Theme colors
 $primary-color: #396afc;
 $secondary-color: #dae7f0;
 
@@ -10,6 +10,18 @@ $secondary-color-1: #ebf2f7;
 $secondary-color-2: #d1dde6;
 
 $color-night: #000;
+$color-snow: #fff;
+
+// ==
+// Mediaqueries
+$lg: 1200px;
+$lg-max: $lg - 1;
+$md: 992px;
+$md-max: $md - 1;
+$sm: 768px;
+$sm-max: $sm - 1;
+$xs: 568px;
+$xs-max: $xs - 1;
 
 // ==
 // Font
@@ -31,3 +43,12 @@ $zIndex-5: 9999;
 $loader-gradient-from: lighten($primary-color, 15%);
 $loader-gradient-to: $primary-color;
 $loader-height: 4px;
+
+// =Notification
+$bg-notification-default: #dae7f0;
+$bg-notification-success: #69c75c;
+$bg-notification-warning: #eaba1c;
+$bg-notification-error: #df4949;
+
+$notification-radius: 10px;
+$notification-padding: 15px 20px 15px 30px;

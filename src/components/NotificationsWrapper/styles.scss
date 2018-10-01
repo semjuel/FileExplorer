@@ -1,0 +1,9 @@
+@import '../../scss/_variables.scss';
+
+.notifications-wrapper{
+  position: fixed;
+  top: 0px; right: 0px;
+  z-index: $zIndex-5;
+
+  padding: 15px;
+}
