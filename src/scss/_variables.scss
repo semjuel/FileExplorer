@@ -1,3 +1,5 @@
+// ==
+// Colors
 $primary-color: #396afc;
 $secondary-color: #dae7f0;
 
@@ -9,11 +11,23 @@ $secondary-color-2: #d1dde6;
 
 $color-night: #000;
 
+// ==
+// Font
 $font: 'Roboto', sans-serif;
 
+// ==
+// BoxShadow
 $box-shadow: 0 0 20px 0 rgba($color-night, .2);
 $box-shadow-1: 0 0 10px 0 rgba($color-night, .2); 
 
+// ==
+// zIndex
 $zIndex-5: 9999;
 
+// ==
+// El's
+
+// =Loader
+$loader-gradient-from: lighten($primary-color, 15%);
+$loader-gradient-to: $primary-color;
 $loader-height: 4px;

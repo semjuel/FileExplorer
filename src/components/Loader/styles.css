@@ -11,4 +11,4 @@
     height: 100%;
     border-top-right-radius: 2px;
     border-bottom-right-radius: 2px;
-    background-color: #396afc; }
+    background: linear-gradient(to right, #84a3fd 0%, #396afc 100%); }

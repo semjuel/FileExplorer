@@ -6,10 +6,13 @@ import { Search } from './Search';
 import { FolderSettings } from '../FolderSettings';
 import { AppSettings } from '../AppSettings';
 
+import Loader from '../../components/Loader';
+
 export class Header extends Component {
   render() {
     return (
       <header className="header">
+        <Loader />
         <div className="header__part">
           <div className="header__logo">
             <Logo />
