@@ -1,0 +1,22 @@
+.search {
+  padding: 5px;
+  border-radius: 5px;
+  background-color: #dfe6eb; }
+  .search__field {
+    border: 0;
+    outline: 0;
+    background-color: transparent;
+    color: #70818c; }
+  .search__button {
+    padding: 0;
+    margin: 0;
+    outline: 0;
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 16px;
+    background-color: #396afc; }

@@ -37,12 +37,16 @@ $box-shadow-1: 0 0 10px 0 rgba($color-night, .2);
 $zIndex-5: 9999;
 
 // ==
-// El's
+// Elements
 
 // =Loader
 $loader-gradient-from: lighten($primary-color, 15%);
 $loader-gradient-to: $primary-color;
 $loader-height: 4px;
+
+// =Search
+$bg-search: #dfe6eb;
+$search-text-color: #70818c;
 
 // =Notification
 $bg-notification-default: #396afc;
