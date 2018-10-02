@@ -1,0 +1,31 @@
+.notifications-wrapper{
+
+  // top-left
+  &--top-left{
+    top: 0; left: 0;
+
+    flex-direction: column;
+  }
+
+  // bottom-left
+  &--bottom-left{
+    bottom: 0; left: 0;
+
+    flex-direction: column-reverse;
+  }
+
+  // top-right
+  &--top-right{
+    top: 0; right: 0;
+
+    flex-direction: column;
+  }
+
+  // bottom-right
+  &--bottom-right{
+    bottom: 0; right: 0;
+
+    flex-direction: column-reverse;
+  }
+
+}

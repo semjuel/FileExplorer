@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import './notification-default.css';
 import './notification-status.css';
-// import './notification-position.css';
 
 export class Notification extends Component {
 
@@ -26,4 +26,16 @@ export class Notification extends Component {
       </div>
     );
   }
+}
+
+Notification.propTypes = {
+  title: PropTypes.string,
+  text: PropTypes.string,
+  status: PropTypes.string
+}
+
+Notification.defaultProps = {
+  title: 'Hello',
+  text: 'Ops! Something happened.',
+  status: 'default'
 }

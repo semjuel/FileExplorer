@@ -3,7 +3,7 @@ import './styles.css';
 import { Header } from '../../components/Header';
 import { Navbar } from '../../components/Navbar';
 import { Subbar } from '../../components/Subbar';
-import NotificationsWrapper from '../../components/NotificationsWrapper';
+import { NotificationsWrapper } from '../../components/NotificationsWrapper';
 
 class App extends Component {
   render() {

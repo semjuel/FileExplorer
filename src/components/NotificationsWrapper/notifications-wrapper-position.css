@@ -1,0 +1,19 @@
+.notifications-wrapper--top-left {
+  top: 0;
+  left: 0;
+  flex-direction: column; }
+
+.notifications-wrapper--bottom-left {
+  bottom: 0;
+  left: 0;
+  flex-direction: column-reverse; }
+
+.notifications-wrapper--top-right {
+  top: 0;
+  right: 0;
+  flex-direction: column; }
+
+.notifications-wrapper--bottom-right {
+  bottom: 0;
+  right: 0;
+  flex-direction: column-reverse; }

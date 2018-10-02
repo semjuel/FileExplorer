@@ -1,8 +1,10 @@
 @import '../../scss/_variables.scss';
 
 .notifications-wrapper{
+  display: flex;
+  flex-direction: column;
+  
   position: fixed;
-  top: 0px; right: 0px;
   z-index: $zIndex-5;
 
   padding: 15px;

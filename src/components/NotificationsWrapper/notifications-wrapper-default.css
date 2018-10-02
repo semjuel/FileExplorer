@@ -1,6 +1,6 @@
 .notifications-wrapper {
+  display: flex;
+  flex-direction: column;
   position: fixed;
-  top: 0px;
-  right: 0px;
   z-index: 9999;
   padding: 15px; }
