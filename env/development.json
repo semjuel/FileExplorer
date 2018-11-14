@@ -1,0 +1,11 @@
+{
+  "PORT": 4000,
+  "BACKEND_URL": "http://teo-back.qa.rolique.space/api",
+  "__BACKEND_URL": "http://localhost:3333/api",
+
+  "APP_URL": "http://localhost:4000",
+  "LOCAL_SERVER_PORT": 3333,
+  "AUTH0_DOMAIN" : "rolique.eu.auth0.com",
+  "AUTH0_CLIENTID" : "F8vYT6M2lISojQON7jnGGquBDOKMndoQ",
+  "STRIPE_KEY" : "pk_test_IX7WlspsZlvPkkhEByD7QnRq"
+}

@@ -1,0 +1,35 @@
+{
+	"compileOnSave": true,
+
+	"compilerOptions": {
+		"module": "esnext",
+		"lib": [
+			"dom",
+			"es2017"
+		],
+		"paths": {
+			"@env/*": ["env/*"],
+			"@assets/*": ["src/assets/*"],
+			"@store/*": ["src/app/store/*"],
+			"@config": ["src/app/config/index"],
+			"@components/*": ["src/app/components/*"],
+			"@containers/*": ["src/app/containers/*"],
+			"@app/*": ["src/app/*"]
+		},
+		"target": "es6",
+		"moduleResolution": "node",
+		"baseUrl": ".",
+		"allowSyntheticDefaultImports": true,
+		"jsx": "react",
+		"noImplicitAny": false,
+		"sourceMap": true,
+		"experimentalDecorators": true,
+		"preserveConstEnums": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true
+	},
+	"exclude": ["node_modules"],
+	"awesomeTypescriptLoaderOptions": {
+		"useBabel": true
+	}
+}
