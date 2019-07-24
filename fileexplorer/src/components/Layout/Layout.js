@@ -1,13 +1,7 @@
 import React from 'react';
-
-import Aux from '../../hoc/Aux';
-import Header from '../Header/Header';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import NewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -21,6 +15,10 @@ import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
+
+import Aux from '../../hoc/Aux';
+import Header from '../Header/Header';
+import AddFolderBtn from '../Sidebar/AddFolderBtn/AddFolderBtn';
 
 const drawerWidth = 240;
 
@@ -43,18 +41,6 @@ const useStyles = makeStyles(theme => ({
     },
     mainWrapper: {
 
-    },
-    button: {
-        margin: theme.spacing(5, 3, 2),
-        background: '#008CFE',
-        textTransform: 'none',
-        color: '#fff',
-        '&:hover': {
-            background: '#006AFE',
-        },
-    },
-    leftIcon: {
-        marginRight: theme.spacing(1),
     },
     content: {
         flexGrow: 1,
@@ -90,10 +76,7 @@ export default function Layout( props ) {
                 >
                     <div className={classes.toolbar} />
 
-                    <Button size="large" variant="contained" className={classes.button}>
-                        <NewFolderIcon className={classes.leftIcon} />
-                        Add folder
-                    </Button>
+                    <AddFolderBtn />
 
                     <List
                         component="nav"
