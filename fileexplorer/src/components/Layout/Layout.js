@@ -1,9 +1,11 @@
 import React from 'react';
+
 import Aux from '../../hoc/Aux';
+import Header from '../Header/Header';
 
 const layout = ( props ) => (
     <Aux>
-        <div>Toolbar .... </div>
+        <Header />
         <main>
             {props.children}
         </main>
