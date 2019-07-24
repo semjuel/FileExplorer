@@ -10,7 +10,8 @@ import ViewGridIcon from '@material-ui/icons/Apps';
 import InfoIcon from '@material-ui/icons/Info';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import NewFolderIcon from '@material-ui/icons/CreateNewFolder';
-import DownloadIcon from '@material-ui/icons/GetApp';
+import UploadIcon from '@material-ui/icons/CloudUpload';
+import RenameIcon from '@material-ui/icons/Edit';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Divider from '@material-ui/core/Divider';
@@ -19,6 +20,7 @@ const useStyles = makeStyles(theme => ({
     bar: {
       background: '#fff',
         color: '#000',
+        zIndex: 1,
     },
     grow: {
         flexGrow: 1,
@@ -40,7 +42,7 @@ export default function Header() {
     const classes = useStyles();
 
     return (
-        <AppBar className={classes.bar} position="relative">
+        <AppBar className={classes.bar} position="fixed">
             <Toolbar>
                 <Typography
                     variant="h5"
@@ -58,15 +60,19 @@ export default function Header() {
                 </IconButton>
 
                 <IconButton className={classes.icon} aria-label="Refresh">
+                    <UploadIcon />
+                </IconButton>
+
+                <IconButton className={classes.icon} aria-label="Refresh">
                     <NewFolderIcon />
                 </IconButton>
 
                 <IconButton className={classes.icon} aria-label="Refresh">
-                    <DownloadIcon />
+                    <FileCopyIcon />
                 </IconButton>
 
                 <IconButton className={classes.icon} aria-label="Refresh">
-                    <FileCopyIcon />
+                    <RenameIcon />
                 </IconButton>
 
                 <IconButton className={classes.icon} aria-label="Refresh">
