@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 
 import Aux from '../../hoc/Aux';
+import EnhancedTable from '../../components/EnhancedTable/EnhancedTable';
 
 const useStyles = makeStyles(theme => ({
     content: {
@@ -17,9 +17,7 @@ export default function MainView() {
 
     return (
         <Aux>
-            <Typography>
-                Table with files....
-            </Typography>
+            <EnhancedTable />
         </Aux>
     );
 }
