@@ -2,7 +2,7 @@ import React from 'react';
 import {makeStyles} from "@material-ui/core";
 import NewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import Button from "@material-ui/core/Button";
-import Modal from '@material-ui/core/Modal';
+import Dialog from '@material-ui/core/Dialog';
 
 import Aux from '../../../hoc/Aux';
 import AddFolderForm from '../../AddFolderForm/AddFolderForm';
@@ -20,33 +20,11 @@ const useStyles = makeStyles(theme => ({
     leftIcon: {
         marginRight: theme.spacing(1),
     },
-    back: {
-        backgroundColor: 'rgba(0, 0, 0, 0.2)',
-    },
-    paper: {
-        position: 'absolute',
-        width: 400,
-        backgroundColor: '#FEFEFE',
-        boxShadow: theme.shadows[5],
-        padding: theme.spacing(2, 4, 4),
-        outline: 'none',
-    },
 }));
 
-function getModalStyle() {
-    const top = 50;
-    const left = 50;
-
-    return {
-        top: `${top}%`,
-        left: `${left}%`,
-        transform: `translate(-${top}%, -${left}%)`,
-    };
-}
 
 export default function AddFolderBtn( props ) {
     const classes = useStyles();
-    const [modalStyle] = React.useState(getModalStyle);
     const [open, setOpen] = React.useState(false);
 
     const handleOpen = () => {
@@ -64,16 +42,9 @@ export default function AddFolderBtn( props ) {
                 Add folder
             </Button>
 
-            <Modal
-                aria-labelledby="simple-modal-title"
-                aria-describedby="simple-modal-description"
-                open={open}
-                onClose={handleClose}
-            >
-                <div style={modalStyle} className={classes.paper}>
-                    <AddFolderForm />
-                </div>
-            </Modal>
+            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+                <AddFolderForm close={handleClose} />
+            </Dialog>
         </Aux>
     );
 }
