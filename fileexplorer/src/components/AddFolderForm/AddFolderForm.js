@@ -8,6 +8,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Tooltip from "@material-ui/core/Tooltip";
+import { SnackbarProvider, useSnackbar } from 'notistack';
+import axios from 'axios'
 
 import Aux from '../../hoc/Aux';
 
@@ -23,15 +25,37 @@ const useStyles = makeStyles(theme => ({
         },
     },
     content: {
-        width: '300px',
+        width: '350px',
     },
 }));
 
 export default function AddFolderForm( props ) {
     const classes = useStyles();
 
+    const position = {
+        vertical: 'top',
+        horizontal: 'right',
+    };
+
+    const { enqueueSnackbar } = useSnackbar();
+
+    function createFolder() {
+        // @TODO send request to the backend.
+
+        enqueueSnackbar('Creating folder...', {anchorOrigin: position,});
+
+        // Close modal window.
+        props.close();
+
+        // @TODO add valid messages.
+        axios.get('http://localhost:3000/')
+            .then(() => enqueueSnackbar('Folder has been created.', {variant: 'success', anchorOrigin: position,}))
+            .catch(() => enqueueSnackbar('Can\'t create a folder.', {variant: 'error', anchorOrigin: position,}));
+    }
+
     return (
         <Aux>
+            <SnackbarProvider maxSnack={3} />
             <DialogTitle id="form-dialog-title">
                 New folder
 
@@ -56,7 +80,7 @@ export default function AddFolderForm( props ) {
                 <Button onClick={props.close} color="primary">
                     Cancel
                 </Button>
-                <Button onClick={props.close} color="primary">
+                <Button onClick={createFolder} color="primary">
                     Create
                 </Button>
             </DialogActions>
