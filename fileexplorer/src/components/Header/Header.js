@@ -15,6 +15,8 @@ import RenameIcon from '@material-ui/icons/Edit';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Divider from '@material-ui/core/Divider';
+import AddFolderForm from "../AddFolderForm/AddFolderForm";
+import Dialog from "@material-ui/core/Dialog";
 
 const useStyles = makeStyles(theme => ({
     bar: {
@@ -40,6 +42,14 @@ const useStyles = makeStyles(theme => ({
 
 export default function Header() {
     const classes = useStyles();
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     return (
         <AppBar className={classes.bar} position="fixed">
@@ -55,47 +65,52 @@ export default function Header() {
 
                 <Divider className={classes.divider} />
 
-                <IconButton className={classes.icon} aria-label="Refresh">
+                <IconButton className={classes.icon} aria-label="Refresh" disabled>
                     <RefreshIcon />
                 </IconButton>
 
-                <IconButton className={classes.icon} aria-label="Refresh">
+                <IconButton className={classes.icon} aria-label="Upload File" disabled>
                     <UploadIcon />
                 </IconButton>
 
-                <IconButton className={classes.icon} aria-label="Refresh">
+                <IconButton className={classes.icon} onClick={handleOpen} aria-label="New Folder">
                     <NewFolderIcon />
                 </IconButton>
 
-                <IconButton className={classes.icon} aria-label="Refresh">
+                <IconButton className={classes.icon} aria-label="File Copy" disabled>
                     <FileCopyIcon />
                 </IconButton>
 
-                <IconButton className={classes.icon} aria-label="Refresh">
+                <IconButton className={classes.icon} aria-label="Rename" disabled>
                     <RenameIcon />
                 </IconButton>
 
-                <IconButton className={classes.icon} aria-label="Refresh">
+                <IconButton className={classes.icon} aria-label="Delete" disabled>
                     <DeleteIcon />
                 </IconButton>
 
 
                 <Divider className={classes.divider} />
 
-                <IconButton className={classes.icon} aria-label="Switch view">
+                <IconButton className={classes.icon} aria-label="Switch view" disabled>
                     <ViewGridIcon />
                 </IconButton>
-                <IconButton className={classes.icon} aria-label="Switch view">
+                <IconButton className={classes.icon} aria-label="Switch view" disabled>
                     <ViewListIcon />
                 </IconButton>
-                <IconButton className={classes.icon} aria-label="Settings">
+                <IconButton className={classes.icon} aria-label="Settings" disabled>
                     <SettingsIcon />
                 </IconButton>
-                <IconButton className={classes.icon} aria-label="File information">
+                <IconButton className={classes.icon} aria-label="File information" disabled>
                     <InfoIcon />
                 </IconButton>
 
             </Toolbar>
+
+            {/* @TODO review this - duplicated code */}
+            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+                <AddFolderForm close={handleClose} />
+            </Dialog>
         </AppBar>
     );
 }

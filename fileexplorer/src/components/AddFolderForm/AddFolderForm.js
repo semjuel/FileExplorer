@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {makeStyles} from "@material-ui/core";
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
@@ -27,10 +27,21 @@ const useStyles = makeStyles(theme => ({
     content: {
         width: '350px',
     },
+    btns: {
+        padding: '8px 24px 16px',
+    },
+    button: {
+        background: '#008CFE',
+        color: '#fff',
+        '&:hover': {
+            background: '#006AFE',
+        },
+    },
 }));
 
 export default function AddFolderForm( props ) {
     const classes = useStyles();
+    const [folderName, setFolderName] = useState();
 
     const position = {
         vertical: 'top',
@@ -64,8 +75,8 @@ export default function AddFolderForm( props ) {
                         <CloseIcon />
                     </Tooltip>
                 </IconButton>
-
             </DialogTitle>
+
             <DialogContent className={classes.content}>
                 <TextField
                     autoFocus
@@ -73,14 +84,16 @@ export default function AddFolderForm( props ) {
                     id="folder-name"
                     label="Enter Folder name"
                     variant="outlined"
+                    onChange={(e) => setFolderName(e.target.value.trim())}
                     fullWidth
                 />
             </DialogContent>
-            <DialogActions>
+
+            <DialogActions className={classes.btns}>
                 <Button onClick={props.close} color="primary">
                     Cancel
                 </Button>
-                <Button onClick={createFolder} color="primary">
+                <Button className={classes.button} variant="contained" onClick={createFolder} color="primary" disabled={!folderName}>
                     Create
                 </Button>
             </DialogActions>
