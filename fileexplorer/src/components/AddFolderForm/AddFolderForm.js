@@ -10,6 +10,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import Tooltip from "@material-ui/core/Tooltip";
 import { SnackbarProvider, useSnackbar } from 'notistack';
 import axios from 'axios'
+import { Markup } from 'interweave';
 
 import Aux from '../../hoc/Aux';
 
@@ -59,9 +60,24 @@ export default function AddFolderForm( props ) {
         props.close();
 
         // @TODO add valid messages.
-        axios.get('http://localhost:3000/')
-            .then(() => enqueueSnackbar('Folder has been created.', {variant: 'success', anchorOrigin: position,}))
-            .catch(() => enqueueSnackbar('Can\'t create a folder.', {variant: 'error', anchorOrigin: position,}));
+        axios.post('http://localhost:9195/admin/file-explorer/entry', {
+            path: "/",
+            name: folderName,
+
+        })
+        .then(function (response) {
+            console.log(response);
+            enqueueSnackbar('Folder has been created.', {variant: 'success', anchorOrigin: position,});
+        })
+        // @TODO handle this correctly.
+        .catch(function (error) {
+            let msg = 'Can\'t create a folder.';
+            if (error.response.data) {
+                msg = msg + ' ' + error.response.data.message;
+            }
+
+            enqueueSnackbar(<Markup content={msg} />, {variant: 'error', anchorOrigin: position,})
+        });
     }
 
     return (
