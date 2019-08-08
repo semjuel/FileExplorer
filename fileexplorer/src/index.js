@@ -10,6 +10,7 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import { SnackbarProvider } from 'notistack';
 
 const store = createStore(combineReducers({ app: reducers }));
+//const store = createStore(reducers, composeWithDevTools());
 
 // const store = createStore(rootReducer, composeWithDevTools(
 //     // @TODO why we need this: applyMiddleware(...middleware),
@@ -18,7 +19,7 @@ const store = createStore(combineReducers({ app: reducers }));
 
 ReactDOM.render(
     <Provider store={store}>
-        <SnackbarProvider maxSnack={3} preventDuplicate>
+        <SnackbarProvider>
             <App />
         </SnackbarProvider>
     </Provider>,

@@ -4,17 +4,44 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Notifier from './components/Notifier/Notifier';
 import { enqueueSnackbar, closeSnackbar } from './actions';
-
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
 import Layout from './components/Layout/Layout';
 import MainView from './containers/MainView/MainView';
 
-function App() {
+function App(props) {
+    const handleClick = () => {
+
+        // NOTE:
+        // if you want to be able to dispatch a `closeSnackbar` action later on,
+        // you SHOULD pass your own `key` in the options. `key` can be any sequence
+        // of number or characters, but it has to be unique to a given snackbar.
+        props.enqueueSnackbar({
+            message: 'Failed fetching data.',
+            options: {
+                key: new Date().getTime() + Math.random(),
+                variant: 'warning',
+                action: key => (
+                    <Button onClick={() => props.closeSnackbar(key)}>dissmiss me</Button>
+                ),
+            },
+        });
+    };
+    const handleDimissAll = () => {
+        props.closeSnackbar();
+    };
   return (
       <Fragment>
           <Notifier />
-          <Layout>
+          <Typography variant="h4" gutterBottom>Notistack redux example</Typography>
+
+          <Button variant="contained" onClick={handleClick}>Display snackbar</Button>
+          <Button variant="contained" onClick={handleDimissAll}>Dismiss all snackbars</Button>
+          {/*<Layout>
+
+
             <MainView />
-          </Layout>
+          </Layout>*/}
     </Fragment>
   );
 }
