@@ -5,6 +5,9 @@ import Aux from '../../hoc/Aux';
 import Header from '../Header/Header';
 import Sidebar from "../Sidebar/Sidebar";
 
+import AddTodo from '../../containers/AddTodo'
+import VisibleTodoList from '../../containers/VisibleTodoList'
+
 const useStyles = makeStyles(theme => ({
     root: {
         display: 'flex',
@@ -41,6 +44,9 @@ export default function Layout( props ) {
                     <div className={classes.mainWrapper}>
                         {props.children}
                     </div>
+
+                    <AddTodo />
+                    <VisibleTodoList />
                 </main>
             </div>
         </Aux>

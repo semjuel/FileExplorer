@@ -18,7 +18,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 
 import AddFolderBtn from './AddFolderBtn/AddFolderBtn';
 
-const drawerWidth = 240;
+const drawerWidth = 300;
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -78,6 +78,7 @@ export default function Sidebar( props ) {
                 aria-labelledby="nested-list-subheader"
                 dense={true}
             >
+
                 <ListItem button>
                     <ListItemIcon>
                         <FolderOpenIcon />
