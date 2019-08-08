@@ -17,6 +17,7 @@ import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
 
 import AddFolderBtn from './AddFolderBtn/AddFolderBtn';
+import FoldersList from './FoldersList/FoldersList';
 
 const drawerWidth = 300;
 
@@ -73,6 +74,7 @@ export default function Sidebar( props ) {
 
             <AddFolderBtn />
 
+            <FoldersList />
             <List
                 component="nav"
                 aria-labelledby="nested-list-subheader"
