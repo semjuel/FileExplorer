@@ -1,16 +1,3 @@
-let nextTodoId = 0
-export const addTodo = text => ({
-    type: 'ADD_TODO',
-    id: nextTodoId++,
-    text
-})
-
-export const toggleTodo = id => ({
-    type: 'TOGGLE_TODO',
-    id
-})
-
-
 export const ENQUEUE_SNACKBAR = 'ENQUEUE_SNACKBAR';
 export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';
 export const REMOVE_SNACKBAR = 'REMOVE_SNACKBAR';
