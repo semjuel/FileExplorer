@@ -1,4 +1,4 @@
-import React, { Component, useState, Fragment } from 'react';
+import React, { Component, Fragment } from 'react';
 import { withStyles } from "@material-ui/core/styles"
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
@@ -12,7 +12,6 @@ import axios from 'axios'
 import { Markup } from 'interweave';
 import { bindActionCreators } from 'redux';
 
-import Aux from '../../hoc/Aux';
 import {addFolder, closeSnackbar, enqueueSnackbar} from "../../actions";
 import PropTypes from "prop-types";
 import {connect} from "react-redux";
@@ -57,15 +56,12 @@ class AddFolderForm extends Component {
     createFolder() {
         // @TODO send request to the backend.
         let self = this;
+        let cKey = new Date().getTime() + Math.random();
 
         this.props.enqueueSnackbar({
             message: 'Creating folder...',
             options: {
-                key: new Date().getTime() + Math.random(),
-                //variant: 'warning',
-                action: key => (
-                    <Button onClick={() => this.props.closeSnackbar(key)}>dissmiss me</Button>
-                ),
+                key: cKey,
             },
         });
 
@@ -80,8 +76,11 @@ class AddFolderForm extends Component {
         })
             .then(function (response) {
                 console.log(response);
+                setTimeout(() => self.props.closeSnackbar(cKey), 500);
+
+                let msg = 'Folder has been created.';
                 self.props.enqueueSnackbar({
-                    message: 'Folder has been created.',
+                    message: <Markup content={msg} />,
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -93,13 +92,15 @@ class AddFolderForm extends Component {
             })
             // @TODO handle this correctly.
             .catch(function (error) {
+                setTimeout(() => self.props.closeSnackbar(cKey), 500);
+
                 let msg = 'Can\'t create a folder.';
                 if (error.response && error.response.data) {
                     msg = msg + ' ' + error.response.data.message;
                 }
 
                 self.props.enqueueSnackbar({
-                    message: msg,
+                    message: <Markup content={msg} />,
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'error',
