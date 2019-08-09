@@ -10,6 +10,14 @@ import FolderIcon from '@material-ui/icons/Folder';
 import FolderOpenIcon from '@material-ui/icons/FolderOpen';
 
 const styles = theme => ({
+    content: {
+        flexGrow: 1,
+        padding: theme.spacing(3),
+        background: '#E8F1F7',
+    },
+    nested: {
+        paddingLeft: theme.spacing(4),
+    },
 });
 
 class FolderItem extends Component {
@@ -20,9 +28,9 @@ class FolderItem extends Component {
                     <FolderIcon />
                 </ListItemIcon>
                 <ListItemText primary={
-                    <Tooltip title={this.props.title}>
+                    <Tooltip title={this.props.name}>
                         <Typography noWrap display={"block"} component="span">
-                            {this.props.title}
+                            {this.props.name}
                         </Typography>
                     </Tooltip>
                 } />

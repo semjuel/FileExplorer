@@ -2,72 +2,58 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios'
 import { withStyles } from "@material-ui/core/styles"
-import {closeSnackbar, enqueueSnackbar} from "../../../actions";
 import { bindActionCreators } from 'redux';
-import {connect} from "react-redux";
+import { connect } from "react-redux";
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import IconButton from '@material-ui/core/IconButton';
-import MoreIcon from '@material-ui/icons/MoreVert';
-import FolderIcon from '@material-ui/icons/Folder';
-import FolderOpenIcon from '@material-ui/icons/FolderOpen';
-// import Collapse from '@material-ui/core/Collapse';
-// import ExpandLess from '@material-ui/icons/ExpandLess';
-// import ExpandMore from '@material-ui/icons/ExpandMore';
-import Typography from '@material-ui/core/Typography';
-import Tooltip from '@material-ui/core/Tooltip';
+import { Markup } from "interweave";
+import CircularProgress from '@material-ui/core/CircularProgress';
+
+import FolderItem from "./FolderItem";
+import { closeSnackbar, enqueueSnackbar, addFolder } from "../../../actions";
+import {hashFnv32a} from "../../../services/hash";
 
 const styles = theme => ({
-    content: {
-        flexGrow: 1,
-        padding: theme.spacing(3),
-        background: '#E8F1F7',
+    nothing: {
+      fontStyle: 'italic',
     },
-    nested: {
-        paddingLeft: theme.spacing(4),
+    center: {
+      textAlign: 'center',
+      paddingTop: theme.spacing(4),
     },
 });
 
 class FoldersList extends Component {
-    handleClick = () => {
-
-        // NOTE:
-        // if you want to be able to dispatch a `closeSnackbar` action later on,
-        // you SHOULD pass your own `key` in the options. `key` can be any sequence
-        // of number or characters, but it has to be unique to a given snackbar.
-        this.props.enqueueSnackbar({
-            message: 'Failed fetching data.',
-            options: {
-                key: new Date().getTime() + Math.random(),
-                variant: 'warning',
-                action: key => (
-                    <Button onClick={() => this.props.closeSnackbar(key)}>dissmiss me</Button>
-                ),
-            },
-        });
+    state = {
+        folders: this.props.folders,
+        loading: true,
     };
 
     componentDidMount() {
         let self = this;
         // @TODO add valid messages.
-        axios.get('http://localhost:9195/admin/file-explorer/entry')
+        // @TODO change request link.
+        axios.get('http://localhost:9195/admin/file-explorer/entry?mode=directory&depth=0')
             .then(function (response) {
-                console.log(response);
+                self.setState({loading: false});
+                let all = response.data.data;
+                all.map(function (el) {
+                    self.props.addFolder({
+                        key: hashFnv32a(el.name) + Math.random(),
+                        ...el
+                    });
+                });
             })
             // @TODO handle this correctly.
             .catch(function (error) {
-                console.log(error);
+                self.setState({loading: false});
                 let msg = 'Failed fetching data.';
-                // if (error.response && error.response.data) {
-                //     msg = msg + ' ' + error.response.data.message;
-                // }
+                if (error.response && error.response.data) {
+                    msg = msg + ' ' + error.response.data.message;
+                }
 
                 self.props.enqueueSnackbar({
-                    message: msg,
+                    message: <Markup content={msg} />,
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'error',
@@ -80,110 +66,40 @@ class FoldersList extends Component {
     }
 
     render() {
-        const { classes } = this.props;
+        const { classes, folders } = this.props;
+        const loading = this.state.loading ? <CircularProgress /> : (<div className={classes.nothing}>No folders</div>);
 
         return (
             <Fragment>
-                <div onClick={this.handleClick}>
-                    Folder list will be here ...
-                </div>
+                { typeof folders !== 'undefined' && folders.length > 0 ? (
+                    <List
+                        component="nav"
+                        aria-labelledby="nested-list-subheader"
+                        dense={true}
+                    >
 
-                <List
-                    component="nav"
-                    aria-labelledby="nested-list-subheader"
-                    dense={true}
-                >
+                        {folders.map(el => (
+                            <FolderItem name={el.name} key={el.key} />
+                        ))}
 
-                    <ListItem button>
-                        <ListItemIcon>
-                            <FolderOpenIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={
-                            <Tooltip title="1 Sent mail Sent mail Sent mailSent mail Sent mail">
-                                <Typography noWrap display={"block"} component="span">
-                                    Sent mail Sent mail Sent mailSent mail Sent mail
-                                </Typography>
-                            </Tooltip>
-                        } />
-
-                    </ListItem>
-                    <ListItem button>
-                        <ListItemIcon>
-                            <FolderIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={
-                            <Tooltip title="1 Drafts">
-                                <Typography noWrap display={"block"} component="span">
-                                    Drafts Drafts Drafts Drafts Drafts
-                                </Typography>
-                            </Tooltip>
-                        } />
-
-                        <ListItemSecondaryAction>
-                            <IconButton edge="end" aria-label="Delete">
-                                <MoreIcon />
-                            </IconButton>
-                        </ListItemSecondaryAction>
-                    </ListItem>
-                    <ListItem button>
-                        <ListItemIcon>
-                            <FolderIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Inbox" />
-
-                        <ListItemSecondaryAction>
-                            <IconButton edge="end" aria-label="Delete">
-                                <MoreIcon />
-                            </IconButton>
-                        </ListItemSecondaryAction>
-                    </ListItem>{/*
-                    <Collapse in={open} timeout="auto" unmountOnExit>
-                        <List dense={true} component="div" disablePadding>
-                            <ListItem button onClick={handleClick} button className={classes.nested}>
-                                <ListItemIcon>
-                                    <FolderIcon />
-                                </ListItemIcon>
-                                <ListItemText primary="Starred" />
-                                {open ? <ExpandLess /> : <ExpandMore />}
-
-                                <ListItemSecondaryAction>
-                                    <IconButton edge="end" aria-label="Delete">
-                                        <MoreIcon />
-                                    </IconButton>
-                                </ListItemSecondaryAction>
-                            </ListItem>
-
-                            <Collapse in={open} timeout="auto" unmountOnExit>
-                                <List dense={true} component="div" disablePadding>
-                                    <ListItem button className={classes.nested}>
-                                        <ListItemIcon>
-                                            <FolderIcon />
-                                        </ListItemIcon>
-                                        <ListItemText primary="Starred" />
-
-                                        <ListItemSecondaryAction>
-                                            <IconButton edge="end" aria-label="Delete">
-                                                <MoreIcon />
-                                            </IconButton>
-                                        </ListItemSecondaryAction>
-                                    </ListItem>
-                                </List>
-                            </Collapse>
-                        </List>
-                    </Collapse>*/}
-                </List>
+                    </List>) : (<div className={classes.center}>{loading}</div>) }
             </Fragment>
         );
     }
 }
 
+const mapStateToProps = state => {
+    return { folders: state.tree.folders };
+};
+
 const mapDispatchToProps = dispatch => bindActionCreators({
     enqueueSnackbar,
     closeSnackbar,
+    addFolder,
 }, dispatch);
 
 FoldersList.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default connect(null, mapDispatchToProps)(withStyles(styles)(FoldersList));
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(FoldersList));
