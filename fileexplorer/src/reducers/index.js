@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux'
-import todos from './todos'
+import foldersTree from './foldersTree'
 import snackbar from './snackbar'
 
 export default combineReducers({
-    todos,
-    snackbar
+    tree: foldersTree,
+    app: snackbar
 })
