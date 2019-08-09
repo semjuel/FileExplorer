@@ -15,6 +15,7 @@ import { bindActionCreators } from 'redux';
 import {addFolder, closeSnackbar, enqueueSnackbar} from "../../actions";
 import PropTypes from "prop-types";
 import {connect} from "react-redux";
+import {hashFnv32a} from "../../services/hash";
 
 const styles = theme => ({
     closeButton: {
@@ -77,6 +78,14 @@ class AddFolderForm extends Component {
             .then(function (response) {
                 console.log(response);
                 setTimeout(() => self.props.closeSnackbar(cKey), 500);
+
+                // @TODO validate response.
+                let newFolder = response.data.data;
+
+                self.props.addFolder({
+                    key: hashFnv32a(newFolder.name) + Math.random(),
+                    ...newFolder,
+                });
 
                 let msg = 'Folder has been created.';
                 self.props.enqueueSnackbar({
