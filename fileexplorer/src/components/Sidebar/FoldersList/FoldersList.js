@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios'
-import {Markup} from "interweave";
 import { withStyles } from "@material-ui/core/styles"
 import {closeSnackbar, enqueueSnackbar} from "../../../actions";
 import { bindActionCreators } from 'redux';
@@ -16,9 +15,9 @@ import IconButton from '@material-ui/core/IconButton';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import FolderIcon from '@material-ui/icons/Folder';
 import FolderOpenIcon from '@material-ui/icons/FolderOpen';
-import Collapse from '@material-ui/core/Collapse';
-import ExpandLess from '@material-ui/icons/ExpandLess';
-import ExpandMore from '@material-ui/icons/ExpandMore';
+// import Collapse from '@material-ui/core/Collapse';
+// import ExpandLess from '@material-ui/icons/ExpandLess';
+// import ExpandMore from '@material-ui/icons/ExpandMore';
 import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
 
@@ -33,7 +32,7 @@ const styles = theme => ({
     },
 });
 
-class FoldersList extends React.Component {
+class FoldersList extends Component {
     handleClick = () => {
 
         // NOTE:
@@ -53,10 +52,6 @@ class FoldersList extends React.Component {
     };
 
     componentDidMount() {
-        const position = {
-            vertical: 'top',
-            horizontal: 'right',
-        };
         let self = this;
         // @TODO add valid messages.
         axios.get('http://localhost:9195/admin/file-explorer/entry')
