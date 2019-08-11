@@ -3,6 +3,7 @@ export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';
 export const REMOVE_SNACKBAR = 'REMOVE_SNACKBAR';
 
 export const ADD_FOLDER = 'ADD_FOLDER';
+export const ADD_FOLDERS = 'ADD_FOLDERS';
 export const REMOVE_FOLDER = 'REMOVE_FOLDER';
 
 export const enqueueSnackbar = notification => {
@@ -38,6 +39,14 @@ export const addFolder = folder => {
             ...folder,
             key: key || new Date().getTime() + Math.random(),
         },
+    };
+};
+
+export const addFolders = folders => {
+    // @TODO change this.
+    return {
+        type: ADD_FOLDERS,
+        folders: folders,
     };
 };
 

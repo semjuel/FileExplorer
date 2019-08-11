@@ -1,4 +1,4 @@
-import { ADD_FOLDER, REMOVE_FOLDER } from '../actions';
+import { ADD_FOLDER, ADD_FOLDERS, REMOVE_FOLDER } from '../actions';
 
 const defaultState = {
     folders: [],
@@ -15,6 +15,15 @@ const foldersTree = (state = defaultState, action) => {
                         key: action.key,
                         ...action.folder,
                     },
+                ],
+            };
+
+        case ADD_FOLDERS:
+            return {
+                ...state,
+                folders: [
+                    ...state.folders,
+                    ...action.folders,
                 ],
             };
 
