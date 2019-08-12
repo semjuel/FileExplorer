@@ -10,7 +10,7 @@ import { Markup } from "interweave";
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import FolderItem from "./FolderItem";
-import { closeSnackbar, enqueueSnackbar, addFolder } from "../../../actions";
+import { closeSnackbar, enqueueSnackbar, addFolder, addFolders } from "../../../actions";
 import {hashFnv32a} from "../../../services/hash";
 
 const styles = theme => ({
@@ -38,11 +38,9 @@ class FoldersList extends Component {
                 self.setState({loading: false});
                 let all = response.data.data;
                 all.map(function (el) {
-                    self.props.addFolder({
-                        key: hashFnv32a(el.name) + Math.random(),
-                        ...el
-                    });
+                    el.key = hashFnv32a(el.name) + Math.random();
                 });
+                self.props.addFolders(all);
             })
             // @TODO handle this correctly.
             .catch(function (error) {
@@ -79,7 +77,7 @@ class FoldersList extends Component {
                     >
 
                         {folders.map(el => (
-                            <FolderItem name={el.name} key={el.key} />
+                            <FolderItem element={el} key={el.key} />
                         ))}
 
                     </List>) : (<div className={classes.center}>{loading}</div>) }
@@ -96,6 +94,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     enqueueSnackbar,
     closeSnackbar,
     addFolder,
+    addFolders,
 }, dispatch);
 
 FoldersList.propTypes = {
