@@ -1,13 +1,9 @@
 import React, { Component } from 'react';
-import { withStyles } from "@material-ui/core/styles"
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import ListItem from "@material-ui/core/ListItem";
-import MoreIcon from '@material-ui/icons/MoreVert';
-import FolderIcon from '@material-ui/icons/Folder';
-import FolderOpenIcon from '@material-ui/icons/FolderOpen';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import List from '@material-ui/core/List';
 import Collapse from '@material-ui/core/Collapse';
@@ -18,24 +14,24 @@ import {Markup} from "interweave";
 import Button from "@material-ui/core/Button";
 import { closeSnackbar, enqueueSnackbar, addFolder, addFolders } from "../../../actions";
 import {bindActionCreators} from "redux";
-import PropTypes from "prop-types";
 import {connect} from "react-redux";
 
-const styles = theme => ({
-    itemIcon: {
-        minWidth: '30px',
-    },
-    content: {
-        padding: '0 ' + theme.spacing(3),
-    },
-    nested: {
-        paddingLeft: theme.spacing(4),
-    },
-    moreIcon: {
-        width: '12px',
-        height: '12px',
-    },
-});
+import "./style.css";
+
+const itemIconStyle = {
+    minWidth: '30px',
+};
+
+const moreIconStyle = {
+    width: '12px',
+    height: '12px',
+};
+
+const FolderIcon = (props) => (
+    <SvgIcon {...props}>
+        <path d="M27 8L27 21C27 22.05 26.16 23 25 23L3 23C1.84 23 1 22.05 1 21L1 3C1 2.07 1.98 1 3 1L9 1C10.02 1 11 2.07 11 3L11 6L25 6C26.16 6 27 6.95 27 8Z"/>
+    </SvgIcon>
+);
 
 const PlusIcon = (props) => (
     <SvgIcon {...props}>
@@ -54,8 +50,8 @@ class FolderItem extends Component {
     constructor(props) {
         super(props);
 
-        // Эта привязка обязательна для работы `this` в колбэке.
         this.handleItemClick = this.handleItemClick.bind(this);
+        this.getNestedStyle = this.getNestedStyle.bind(this);
     }
 
     state = {
@@ -64,19 +60,33 @@ class FolderItem extends Component {
         open: false,
     };
 
+    getNestedStyle(level) {
+        const p = 22 +  10 * level;
+        return {
+            paddingLeft: p + 'px',
+            paddingRight: '22px',
+        };
+    }
+
     handleItemClick() {
         if (this.state.loading) {
             return;
         }
 
+        // In case element has children - don't make request, just collapse children block.
+        if (typeof this.state.element.children !== 'undefined' && this.state.element.children.length > 0) {
+            this.setState({
+                open: !this.state.open,
+            });
 
+            return;
+        }
 
         let self = this;
         this.setState({
             loading: true,
         });
 
-        console.log(this.state.element);
         const path = this.state.element.path;
 
         // @TODO implement this.
@@ -86,6 +96,7 @@ class FolderItem extends Component {
                 let all = response.data.data;
                 all.map(function (el) {
                     el.key = hashFnv32a(el.name) + Math.random();
+                    el.level = self.state.element.level + 1;
                 });
 
                 self.state.element.children = all;
@@ -115,19 +126,21 @@ class FolderItem extends Component {
             })
             .then(function () {
                 // always executed
-                self.setState({loading: false});
+                self.setState({
+                    loading: false,
+                    open: true
+                });
             });
     }
 
     render() {
-        const { element, classes } = this.props;
-        console.log(classes);
+        const { element, styling } = this.props;
 
         return (
             <React.Fragment>
-                <ListItem  onClick={this.handleItemClick}  className={classes.content} button>
-                    <ListItemIcon className={classes.itemIcon}>
-                        <FolderIcon />
+                <ListItem style={styling} className={'folder-tree'} onClick={this.handleItemClick} button>
+                    <ListItemIcon style={itemIconStyle}>
+                        <FolderIcon className={'folder-icon'} viewBox='0 0 27 23' />
                     </ListItemIcon>
                     <ListItemText primary={
                         <Tooltip title={element.name}>
@@ -138,14 +151,14 @@ class FolderItem extends Component {
                     } />
 
                     {
-                        element.children === undefined && !this.state.loading ?
-                            (<PlusIcon className={classes.moreIcon} viewBox='0 0 12 12' />) :
+                        ((element.children === undefined && !this.state.loading) || (!this.state.open && !this.state.loading)) ?
+                            (<PlusIcon style={moreIconStyle} viewBox='0 0 12 12' />) :
                             ('')
                     }
 
                     {
-                        typeof element.children !== 'undefined' && element.children.length > 0 && !this.state.loading ?
-                            (<MinusIcon className={classes.moreIcon} viewBox='0 0 12 12' />) :
+                        typeof element.children !== 'undefined' && element.children.length > 0 && !this.state.loading && this.state.open ?
+                            (<MinusIcon style={moreIconStyle} viewBox='0 0 12 12' />) :
                             ('')
                     }
 
@@ -157,21 +170,12 @@ class FolderItem extends Component {
                 {
                     typeof element.children !== 'undefined' && element.children.length > 0 ?
                         (
-                            <Collapse in={true} timeout="auto" unmountOnExit>
-                                <List dense={true} component="div" disablePadding>
+                            <Collapse in={this.state.open} timeout="auto" unmountOnExit>
+                                {<List dense={true} component="div" disablePadding>
                                     {element.children.map(el => (
-                                        <FolderItem element={el} key={el.key} className={classes.nested} classes={classes} />
+                                        <FolderItem styling={this.getNestedStyle(el.level)} element={el} key={el.key} />
                                     ))}
-                                </List>
-                                {/*<List dense={true} component="div" disablePadding>
-                                    <ListItem button className={classes.nested}>
-                                        <ListItemIcon>
-                                            <FolderIcon />
-                                        </ListItemIcon>
-                                        <ListItemText primary="Starred" />
-
-                                    </ListItem>
-                                </List>*/}
+                                </List>}
                             </Collapse>
                         ) :
                         ('')
@@ -193,9 +197,4 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     addFolders,
 }, dispatch);
 
-// FolderItem.propTypes = {
-//     classes: PropTypes.object.isRequired,
-// };
-
-
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(FolderItem));
+export default connect(mapStateToProps, mapDispatchToProps)(FolderItem);

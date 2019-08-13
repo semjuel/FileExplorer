@@ -1,0 +1,19 @@
+.folder-tree {
+    color: rgba(0, 0, 0, 0.65) !important;
+}
+
+.folder-tree:hover {
+    color: #222222 !important;
+}
+
+.MuiSvgIcon-root.folder-icon {
+    fill: #bbccd8;
+    stroke: #70818c;
+    stroke-width: 2;
+    width: 27px;
+    height: 21px;
+}
+
+.folder-tree:hover .MuiSvgIcon-root.folder-icon {
+    stroke: #222222;
+}
