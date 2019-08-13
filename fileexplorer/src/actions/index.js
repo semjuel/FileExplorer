@@ -6,6 +6,8 @@ export const ADD_FOLDER = 'ADD_FOLDER';
 export const ADD_FOLDERS = 'ADD_FOLDERS';
 export const REMOVE_FOLDER = 'REMOVE_FOLDER';
 
+export const SET_SELECTED = 'SET_SELECTED';
+
 export const enqueueSnackbar = notification => {
     const key = notification.options && notification.options.key;
 
@@ -54,3 +56,13 @@ export const removeFolder = key => ({
     type: REMOVE_FOLDER,
     key,
 });
+
+export const setSelected = folder => {
+    // @TODO change this.
+    return {
+        type: SET_SELECTED,
+        folder: {
+            ...folder,
+        },
+    };
+};
