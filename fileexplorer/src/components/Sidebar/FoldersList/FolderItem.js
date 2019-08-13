@@ -68,6 +68,11 @@ class FolderItem extends Component {
         };
     }
 
+/*    shouldComponentUpdate(nextProps, nextState, nextContext) {
+// @TODO update component only if necessary.
+        console.log(this.state.tree);
+    }*/
+
     handleItemClick() {
         if (this.state.loading) {
             return;
