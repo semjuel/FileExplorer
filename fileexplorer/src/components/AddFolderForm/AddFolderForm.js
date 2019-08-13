@@ -84,6 +84,8 @@ class AddFolderForm extends Component {
 
                 self.props.addFolder({
                     key: hashFnv32a(newFolder.name) + Math.random(),
+                    // @TODO add correct level.
+                    level: 0,
                     ...newFolder,
                 });
 
