@@ -69,9 +69,15 @@ class AddFolderForm extends Component {
         // Close modal window.
         this.props.close();
 
+        let path = '/';
+        const active = this.props.selected ? this.props.selected : null;
+        if (active) {
+            path = active.path;
+        }
+        console.log(path);
         // @TODO add valid messages.
         axios.post('http://localhost:9195/admin/file-explorer/entry', {
-            path: "/",
+            path: path,
             name: self.state.folderName,
 
         })
@@ -82,12 +88,25 @@ class AddFolderForm extends Component {
                 // @TODO validate response.
                 let newFolder = response.data.data;
 
-                self.props.addFolder({
-                    key: hashFnv32a(newFolder.name) + Math.random(),
-                    // @TODO add correct level.
-                    level: 0,
-                    ...newFolder,
-                });
+                if (active) {
+                    // Add children.
+                    // @TODO find a good way to add children.
+                    // temporary add directory to the root.
+                    self.props.addFolder({
+                        key: hashFnv32a(newFolder.name) + Math.random(),
+                        // @TODO add correct level.
+                        level: 0,
+                        ...newFolder,
+                    });
+                }
+                else {
+                    self.props.addFolder({
+                        key: hashFnv32a(newFolder.name) + Math.random(),
+                        // @TODO add correct level.
+                        level: 0,
+                        ...newFolder,
+                    });
+                }
 
                 let msg = 'Folder has been created.';
                 self.props.enqueueSnackbar({
@@ -163,6 +182,13 @@ class AddFolderForm extends Component {
     }
 }
 
+const mapStateToProps = state => {
+    return {
+        folders: state.tree.folders,
+        selected: state.selected.selected,
+    };
+};
+
 const mapDispatchToProps = dispatch => bindActionCreators({
     enqueueSnackbar,
     closeSnackbar,
@@ -173,4 +199,4 @@ AddFolderForm.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default connect(null, mapDispatchToProps)(withStyles(styles)(AddFolderForm));
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(AddFolderForm));
