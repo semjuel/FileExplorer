@@ -8,6 +8,18 @@ import FoldersList from './FoldersList/FoldersList';
 const drawerWidth = 300;
 
 const useStyles = makeStyles(theme => ({
+    '@global': {
+        '*::-webkit-scrollbar': {
+            width: '0.4em'
+        },
+        '*::-webkit-scrollbar-track': {
+            '-webkit-box-shadow': 'inset 0 0 6px rgba(0,0,0,0.00)'
+        },
+        '*::-webkit-scrollbar-thumb': {
+            backgroundColor: 'rgba(0,140,254,.4)',
+            outline: '1px solid slategrey'
+        }
+    },
     drawer: {
         width: drawerWidth,
         flexShrink: 0,
