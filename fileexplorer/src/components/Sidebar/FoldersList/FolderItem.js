@@ -72,6 +72,8 @@ class FolderItem extends Component {
         if (this.state.loading) {
             return;
         }
+        console.log(this.props);
+        this.props.setSelected(this.state.element);
 
         // In case element has children - don't make request, just collapse children block.
         if (typeof this.state.element.children !== 'undefined' && this.state.element.children.length > 0) {
@@ -134,11 +136,14 @@ class FolderItem extends Component {
     }
 
     render() {
-        const { element, styling } = this.props;
+        const { element, styling, selectedIndex } = this.props;
 
+        // @TODO how to handle selected item.
+        console.log('selectedIndex = ' + selectedIndex);
+        console.log('key = ' + element.key);
         return (
             <React.Fragment>
-                <ListItem style={styling} className={'folder-tree'} onClick={this.handleItemClick} button>
+                <ListItem selected={selectedIndex === element.key} style={styling} className={'folder-tree'} onClick={this.handleItemClick} button>
                     <ListItemIcon style={itemIconStyle}>
                         <FolderIcon className={'folder-icon'} viewBox='0 0 27 23' />
                     </ListItemIcon>

@@ -17,3 +17,8 @@
 .folder-tree:hover .MuiSvgIcon-root.folder-icon {
     stroke: #222222;
 }
+
+.folder-tree.Mui-selected .folder-icon {
+    fill: #396afc;
+    stroke: #396afc;
+}
