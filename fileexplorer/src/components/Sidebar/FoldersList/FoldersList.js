@@ -39,6 +39,7 @@ class FoldersList extends Component {
                 let all = response.data.data;
                 all.map(function (el) {
                     el.key = hashFnv32a(el.name) + Math.random();
+                    el.level = 0;
                 });
                 self.props.addFolders(all);
             })
