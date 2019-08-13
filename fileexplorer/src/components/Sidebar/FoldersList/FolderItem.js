@@ -12,7 +12,7 @@ import axios from "axios";
 import {hashFnv32a} from "../../../services/hash";
 import {Markup} from "interweave";
 import Button from "@material-ui/core/Button";
-import { closeSnackbar, enqueueSnackbar, addFolder, addFolders } from "../../../actions";
+import { closeSnackbar, enqueueSnackbar, setSelected } from "../../../actions";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 
@@ -78,6 +78,7 @@ class FolderItem extends Component {
             return;
         }
         console.log(this.props);
+
         this.props.setSelected(this.state.element);
 
         // In case element has children - don't make request, just collapse children block.
@@ -140,15 +141,23 @@ class FolderItem extends Component {
             });
     }
 
+/*    componentDidUpdate(prevProps, prevState, snapshot) {
+        // @TODO implement this.
+    }*/
+
     render() {
         const { element, styling, selectedIndex } = this.props;
 
+        // @TODO change this.
+        const sIndex = this.props.selected && typeof this.props.selected.key !== 'undefined' ? this.props.selected.key : '';
+
         // @TODO how to handle selected item.
-        console.log('selectedIndex = ' + selectedIndex);
-        console.log('key = ' + element.key);
+        //console.log('selectedIndex = ' + selectedIndex);
+        //console.log('key = ' + element.key);
+        console.log('name = ' + element.name);
         return (
             <React.Fragment>
-                <ListItem selected={selectedIndex === element.key} style={styling} className={'folder-tree'} onClick={this.handleItemClick} button>
+                <ListItem selected={sIndex === element.key} style={styling} className={'folder-tree'} onClick={this.handleItemClick} button>
                     <ListItemIcon style={itemIconStyle}>
                         <FolderIcon className={'folder-icon'} viewBox='0 0 27 23' />
                     </ListItemIcon>
@@ -183,7 +192,7 @@ class FolderItem extends Component {
                             <Collapse in={this.state.open} timeout="auto" unmountOnExit>
                                 {<List dense={true} component="div" disablePadding>
                                     {element.children.map(el => (
-                                        <FolderItem styling={this.getNestedStyle(el.level)} element={el} key={el.key} />
+                                        <FolderItemWrapper styling={this.getNestedStyle(el.level)} element={el} key={el.key} />
                                     ))}
                                 </List>}
                             </Collapse>
@@ -197,14 +206,18 @@ class FolderItem extends Component {
 }
 
 const mapStateToProps = state => {
-    return { folders: state.tree.folders };
+    return {
+        folders: state.tree.folders,
+        selected: state.selected.selected,
+    };
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     enqueueSnackbar,
     closeSnackbar,
-    addFolder,
-    addFolders,
+    setSelected,
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(FolderItem);
+const FolderItemWrapper = connect(mapStateToProps, mapDispatchToProps)(FolderItem);
+
+export default FolderItemWrapper;

@@ -9,7 +9,7 @@ import List from '@material-ui/core/List';
 import { Markup } from "interweave";
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-import FolderItem from "./FolderItem";
+import FolderItemWrapper from "./FolderItem";
 import { closeSnackbar, enqueueSnackbar, addFolder, addFolders } from "../../../actions";
 import {hashFnv32a} from "../../../services/hash";
 
@@ -28,16 +28,9 @@ const itemStyle = {
 };
 
 class FoldersList extends Component {
-    constructor(props) {
-        super(props);
-
-        this.setSelectedIndex = this.setSelectedIndex.bind(this);
-    }
-
     state = {
         folders: this.props.folders,
         loading: true,
-        selectedIndex: '',
     };
 
     componentDidMount() {
@@ -75,13 +68,6 @@ class FoldersList extends Component {
             });
     }
 
-    setSelectedIndex(el) {
-        console.log(el.name);
-        this.setState({
-            selectedIndex: el.key,
-        });
-    }
-
     render() {
         const { classes, folders } = this.props;
         const loading = this.state.loading ? <CircularProgress /> : (<div className={classes.nothing}>No folders</div>);
@@ -96,7 +82,7 @@ class FoldersList extends Component {
                     >
 
                         {folders.map(el => (
-                            <FolderItem selectedIndex={this.state.selectedIndex} setSelected={this.setSelectedIndex} styling={itemStyle} element={el} key={el.key} />
+                            <FolderItemWrapper styling={itemStyle} element={el} key={el.key} />
                         ))}
 
                     </List>) : (<div className={classes.center}>{loading}</div>) }
