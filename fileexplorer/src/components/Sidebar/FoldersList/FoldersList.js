@@ -23,6 +23,10 @@ const styles = theme => ({
     },
 });
 
+const itemStyle = {
+    padding: '0 22px',
+};
+
 class FoldersList extends Component {
     state = {
         folders: this.props.folders,
@@ -78,7 +82,7 @@ class FoldersList extends Component {
                     >
 
                         {folders.map(el => (
-                            <FolderItem element={el} key={el.key} />
+                            <FolderItem styling={itemStyle} element={el} key={el.key} />
                         ))}
 
                     </List>) : (<div className={classes.center}>{loading}</div>) }
