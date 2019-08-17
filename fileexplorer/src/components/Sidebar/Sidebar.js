@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 
 import AddFolderBtn from './AddFolderBtn/AddFolderBtn';
-import FoldersList from './FoldersList/FoldersList';
+import FoldersList from './FoldersTree/FoldersList';
 
 const drawerWidth = 300;
 
