@@ -5,6 +5,8 @@ const childIds = (state, action) => {
     switch (action.type) {
         case ADD_CHILD:
             return [ ...state, action.childId ];
+        case ADD_CHILDREN:
+            return [ ...state, ...action.childIds ];
         case REMOVE_CHILD:
             return state.filter(id => id !== action.childId);
         default:
@@ -59,7 +61,6 @@ let root = {
 };
 export default (state = root, action) => {
     const { id } = action;
-    debugger;
     if (typeof id === 'undefined') {
         return state
     }
