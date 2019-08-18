@@ -1,5 +1,6 @@
 import React from 'react'
 import { Component } from 'react'
+import axios from "axios";
 import { connect } from 'react-redux'
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
@@ -11,7 +12,10 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Collapse from "@material-ui/core/Collapse";
 import List from "@material-ui/core/List";
 import {bindActionCreators} from "redux";
-import {setSelected} from "../../../actions";
+import {setSelected, changeFolderStatus, enqueueSnackbar, closeSnackbar, addFolders, addChildren} from "../../../actions";
+import {hashFnv32a} from "../../../services/hash";
+import {Markup} from "interweave";
+import Button from "@material-ui/core/Button";
 
 const itemIconStyle = {
     minWidth: '30px',
@@ -48,11 +52,6 @@ export class Tree extends Component {
         this.handleItemClick = this.handleItemClick.bind(this);
     }
 
-    state = {
-        element: this.props.element,
-        open: false,
-    };
-
     static getNestedStyle(level) {
         const p = 22 +  10 * level;
         return {
@@ -62,29 +61,84 @@ export class Tree extends Component {
     }
 
     renderChild = childId => {
-        const { id, level } = this.props;
+        const { id, level } = this.props.folder;
         return (
-            <ConnectedTree key={childId} id={childId} styling={Tree.getNestedStyle(level)}  parentId={id} />
+            <ConnectedTree key={childId} id={childId} styling={Tree.getNestedStyle(level + 1)}  parentId={id} />
         )
     };
 
     handleItemClick() {
-        if (this.props.loading) {
+        if (this.props.folder.loading) {
             return;
         }
 
-        console.log(this.props);
         this.props.setSelected(this.props.id);
-        console.log('Click');
+
+        // In case element has children - don't make request, just collapse children block.
+        if (typeof this.props.folder.childIds !== 'undefined' && this.props.folder.childIds.length > 0) {
+            this.props.changeFolderStatus(this.props.id, !this.props.folder.open, false);
+
+            return;
+        }
+
+        let self = this;
+        this.props.changeFolderStatus(this.props.id, this.props.folder.open, true);
+
+        const path = this.props.folder.path;
+        // Make request.
+        axios.get('http://localhost:9195/admin/file-explorer/entry?mode=directory&depth=0&path=' + path)
+            .then(function (response) {
+                let data = response.data.data;
+                let childIds = [], children = [];
+                data.map(function (el) {
+                    el.id = hashFnv32a(el.name) + Math.random();
+                    el.level = self.props.folder.level + 1;
+                    childIds.push(el.id);
+                    children[el.id] = el;
+                });
+
+                self.props.addChildren(self.props.id, childIds);
+                self.props.addFolders(children);
+            })
+            // @TODO handle this correctly.
+            .catch(function (error) {
+                let msg = 'Failed fetching data.';
+                if (error.response && error.response.data) {
+                    msg = msg + ' ' + error.response.data.message;
+                }
+
+                self.props.enqueueSnackbar({
+                    message: <Markup content={msg} />,
+                    options: {
+                        key: new Date().getTime() + Math.random(),
+                        variant: 'error',
+                        action: key => (
+                            <Button onClick={() => self.props.closeSnackbar(key)}>dissmiss me</Button>
+                        ),
+                    },
+                });
+            })
+            .then(function () {
+                // Always executed.
+                self.props.changeFolderStatus(self.props.id, true, false);
+            });
+    }
+
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+        return nextProps.folder.open != this.props.folder.open ||
+            nextProps.folder.loading != this.props.folder.loading ||
+            this.props.folder.id == nextProps.selected ||
+            this.props.folder.id == this.props.selected ||
+            nextProps.folder.childIds != this.props.folder.childIds;
     }
 
     render() {
-        const { name, parentId, childIds, styling } = this.props;
-        console.log(name);
-        //console.log(this.props);
+        const { name, childIds, open, loading } = this.props.folder;
+        const { parentId, selected, id, styling } = this.props;
+
         return (
             <React.Fragment>
-                <ListItem style={styling} onClick={this.handleItemClick} button>
+                <ListItem selected={selected === id} style={styling} onClick={this.handleItemClick} button>
                     <ListItemIcon style={itemIconStyle}>
                         <FolderIcon className={'folder-icon'} viewBox='0 0 27 23' />
                     </ListItemIcon>
@@ -98,26 +152,26 @@ export class Tree extends Component {
                     } />
 
                     {
-                        ((childIds === undefined && !this.props.loading) || (!this.state.open && !this.props.loading)) ?
+                        ((childIds === undefined && !loading) || (!open && !loading)) ?
                             (<PlusIcon style={moreIconStyle} viewBox='0 0 12 12' />) :
                             ('')
                     }
 
                     {
-                        typeof childIds !== 'undefined' && childIds.length > 0 && !this.props.loading && this.state.open ?
+                        typeof childIds !== 'undefined' && childIds.length > 0 && !loading && open ?
                             (<MinusIcon style={moreIconStyle} viewBox='0 0 12 12' />) :
                             ('')
                     }
 
                     {
-                        this.props.loading ? (<CircularProgress size={12} />) :('')
+                        loading ? (<CircularProgress size={12} />) :('')
                     }
                 </ListItem>
 
                 {
-                    typeof childIds !== 'undefined' && childIds.length > 0 ?
+                    typeof childIds !== 'undefined' && childIds.length > 0 && open ?
                         (
-                            <Collapse in={true} timeout="auto" unmountOnExit>
+                            <Collapse in={open} timeout="auto" unmountOnExit>
                                 {<List dense={true} component="div" disablePadding>
                                     {childIds.map(this.renderChild)}
                                 </List>}
@@ -131,11 +185,19 @@ export class Tree extends Component {
 }
 
 function mapStateToProps(state, ownProps) {
-    return state.tree[ownProps.id]
+    return  {
+        folder: state.tree[ownProps.id],
+        selected: state.selected,
+    };
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators({
+    enqueueSnackbar,
+    closeSnackbar,
+    addFolders,
+    addChildren,
     setSelected,
+    changeFolderStatus,
 }, dispatch);
 
 
