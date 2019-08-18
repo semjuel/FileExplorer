@@ -1,12 +1,8 @@
+import {hashFnv32a} from "../services/hash";
+
 export const ENQUEUE_SNACKBAR = 'ENQUEUE_SNACKBAR';
 export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';
 export const REMOVE_SNACKBAR = 'REMOVE_SNACKBAR';
-
-export const ADD_FOLDER = 'ADD_FOLDER';
-export const ADD_FOLDERS = 'ADD_FOLDERS';
-export const REMOVE_FOLDER = 'REMOVE_FOLDER';
-
-export const SET_SELECTED = 'SET_SELECTED';
 
 export const enqueueSnackbar = notification => {
     const key = notification.options && notification.options.key;
@@ -31,18 +27,10 @@ export const removeSnackbar = key => ({
     key,
 });
 
-export const addFolder = folder => {
-    const key = folder.options && folder.options.key;
+export const ADD_FOLDERS = 'ADD_FOLDERS';
+export const REMOVE_FOLDER = 'REMOVE_FOLDER';
 
-    // @TODO change this.
-    return {
-        type: ADD_FOLDER,
-        folder: {
-            ...folder,
-            key: key || new Date().getTime() + Math.random(),
-        },
-    };
-};
+export const SET_SELECTED = 'SET_SELECTED';
 
 export const addFolders = folders => {
     // @TODO change this.
@@ -67,36 +55,43 @@ export const setSelected = folder => {
     };
 };
 
-export const INCREMENT = 'INCREMENT';
-export const CREATE_NODE = 'CREATE_NODE';
-export const DELETE_NODE = 'DELETE_NODE';
+export const ADD_FOLDER = 'ADD_FOLDER';
+export const DELETE_FOLDER = 'DELETE_FOLDER';
 export const ADD_CHILD = 'ADD_CHILD';
+export const ADD_CHILDREN = 'ADD_CHILDREN';
 export const REMOVE_CHILD = 'REMOVE_CHILD';
 
-export const increment = (nodeId) => ({
-    type: INCREMENT,
-    nodeId
+export const addFolder = folder => {
+    const id = folder.id || hashFnv32a(folder.name) + Math.random();
+
+    return {
+        type: ADD_FOLDER,
+        folder: {
+            ...folder,
+        },
+        id: id,
+    };
+};
+
+export const deleteFolder = (id) => ({
+    type: DELETE_FOLDER,
+    id
 });
 
-let nextId = 0;
-export const createNode = () => ({
-    type: CREATE_NODE,
-    nodeId: `new_${nextId++}`
-});
-
-export const deleteNode = (nodeId) => ({
-    type: DELETE_NODE,
-    nodeId
-});
-
-export const addChild = (nodeId, childId) => ({
+export const addChild = (id, childId) => ({
     type: ADD_CHILD,
-    nodeId,
+    id,
     childId
 });
 
-export const removeChild = (nodeId, childId) => ({
+export const addChildren = (id, children) => ({
+    type: ADD_CHILDREN,
+    id,
+    children
+});
+
+export const removeChild = (id, childId) => ({
     type: REMOVE_CHILD,
-    nodeId,
+    id,
     childId
 });
