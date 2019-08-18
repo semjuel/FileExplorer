@@ -27,10 +27,17 @@ export const removeSnackbar = key => ({
     key,
 });
 
+export const SET_SELECTED = 'SET_SELECTED';
+
+export const setSelected = id => {
+    return {
+        type: SET_SELECTED,
+        id,
+    };
+};
+
 export const ADD_FOLDERS = 'ADD_FOLDERS';
 export const REMOVE_FOLDER = 'REMOVE_FOLDER';
-
-export const SET_SELECTED = 'SET_SELECTED';
 
 export const addFolders = folders => {
     // @TODO change this.
@@ -44,16 +51,6 @@ export const removeFolder = key => ({
     type: REMOVE_FOLDER,
     key,
 });
-
-export const setSelected = folder => {
-    // @TODO change this.
-    return {
-        type: SET_SELECTED,
-        folder: {
-            ...folder,
-        },
-    };
-};
 
 export const ADD_FOLDER = 'ADD_FOLDER';
 export const DELETE_FOLDER = 'DELETE_FOLDER';
@@ -81,13 +78,13 @@ export const deleteFolder = (id) => ({
 export const addChild = (id, childId) => ({
     type: ADD_CHILD,
     id,
-    childId
+    childId,
 });
 
-export const addChildren = (id, children) => ({
+export const addChildren = (id, childIds) => ({
     type: ADD_CHILDREN,
     id,
-    children
+    childIds,
 });
 
 export const removeChild = (id, childId) => ({

@@ -1,20 +1,12 @@
-import {ADD_FOLDER, ADD_FOLDERS, REMOVE_FOLDER, SET_SELECTED} from '../actions';
+import { SET_SELECTED } from '../actions';
 
-const defaultState = {
-    selected: null,
-};
-
-const selected = (state = defaultState, action) => {
+const defaultState = null;
+export default (state = defaultState, action) => {
     switch (action.type) {
         case SET_SELECTED:
-            state.selected = action.folder;
-            return {
-                ...state
-            };
+            return action.id;
 
         default:
             return state
     }
 };
-
-export default selected
