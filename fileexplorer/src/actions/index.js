@@ -36,23 +36,9 @@ export const setSelected = id => {
     };
 };
 
-export const ADD_FOLDERS = 'ADD_FOLDERS';
-export const REMOVE_FOLDER = 'REMOVE_FOLDER';
-
-export const addFolders = folders => {
-    // @TODO change this.
-    return {
-        type: ADD_FOLDERS,
-        folders: folders,
-    };
-};
-
-export const removeFolder = key => ({
-    type: REMOVE_FOLDER,
-    key,
-});
-
 export const ADD_FOLDER = 'ADD_FOLDER';
+export const ADD_FOLDERS = 'ADD_FOLDERS';
+export const CHANGE_FOLDER_STATUS = 'CHANGE_FOLDER_STATUS';
 export const DELETE_FOLDER = 'DELETE_FOLDER';
 export const ADD_CHILD = 'ADD_CHILD';
 export const ADD_CHILDREN = 'ADD_CHILDREN';
@@ -69,6 +55,20 @@ export const addFolder = folder => {
         id: id,
     };
 };
+
+export const addFolders = folders => {
+    return {
+        type: ADD_FOLDERS,
+        folders: folders,
+    };
+};
+
+export const changeFolderStatus = (id, open, loading) => ({
+    type: CHANGE_FOLDER_STATUS,
+    id,
+    open,
+    loading,
+});
 
 export const deleteFolder = (id) => ({
     type: DELETE_FOLDER,

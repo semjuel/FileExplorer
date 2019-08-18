@@ -1,5 +1,4 @@
-import { ADD_CHILD, ADD_CHILDREN, REMOVE_CHILD, ADD_FOLDER, DELETE_FOLDER } from '../actions'
-import {hashFnv32a} from "../services/hash";
+import { ADD_CHILD, ADD_CHILDREN, REMOVE_CHILD, ADD_FOLDER, ADD_FOLDERS, DELETE_FOLDER, CHANGE_FOLDER_STATUS } from '../actions'
 
 const childIds = (state, action) => {
     switch (action.type) {
@@ -18,19 +17,24 @@ const tree = (state, action) => {
     switch (action.type) {
         case ADD_FOLDER:
             return {
-                ...action.folder,
-                childIds: []
+                ...action.folder
+            };
+        case CHANGE_FOLDER_STATUS:
+            return {
+                ...state,
+                open: action.open,
+                loading: action.loading,
             };
         case ADD_CHILD:
         case REMOVE_CHILD:
             return {
                 ...state,
-                childIds: childIds(state.childIds, action)
+                childIds: childIds(state.childIds || [], action)
             };
         case ADD_CHILDREN:
             return {
                 ...state,
-                childIds: childIds(state.childIds, action)
+                childIds: childIds(state.childIds || [], action)
             };
         default:
             return state
@@ -56,10 +60,19 @@ let root = {
         level: 0,
         path: '/',
         type: 'directory',
-        childIds: [],
+        loading: true,
+        open: false,
+        // childIds: [],
     }
 };
 export default (state = root, action) => {
+    if (action.type === ADD_FOLDERS) {
+        return {
+            ...state,
+            ...action.folders
+        };
+    }
+
     const { id } = action;
     if (typeof id === 'undefined') {
         return state
