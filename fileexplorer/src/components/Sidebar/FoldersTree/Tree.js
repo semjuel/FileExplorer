@@ -17,6 +17,8 @@ import {hashFnv32a} from "../../../services/hash";
 import {Markup} from "interweave";
 import Button from "@material-ui/core/Button";
 
+import "./style.css";
+
 const itemIconStyle = {
     minWidth: '30px',
 };
@@ -138,7 +140,7 @@ export class Tree extends Component {
 
         return (
             <React.Fragment>
-                <ListItem selected={selected === id} style={styling} onClick={this.handleItemClick} button>
+                <ListItem selected={selected === id} style={styling} className={'folder-tree'} onClick={this.handleItemClick} button component={'div'}>
                     <ListItemIcon style={itemIconStyle}>
                         <FolderIcon className={'folder-icon'} viewBox='0 0 27 23' />
                     </ListItemIcon>
