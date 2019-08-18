@@ -12,7 +12,7 @@ import axios from 'axios'
 import { Markup } from 'interweave';
 import { bindActionCreators } from 'redux';
 
-import {addFolder, closeSnackbar, enqueueSnackbar} from "../../actions";
+import {addChild, addFolder, closeSnackbar, enqueueSnackbar} from "../../actions";
 import PropTypes from "prop-types";
 import {connect} from "react-redux";
 import {hashFnv32a} from "../../services/hash";
@@ -69,44 +69,27 @@ class AddFolderForm extends Component {
         // Close modal window.
         this.props.close();
 
-        let path = '/';
-        const active = this.props.selected ? this.props.selected : null;
-        if (active) {
-            path = active.path;
-        }
-        console.log(path);
+        let folder = this.props.folder;
+
         // @TODO add valid messages.
         axios.post('http://localhost:9195/admin/file-explorer/entry', {
-            path: path,
+            path: folder.path,
             name: self.state.folderName,
 
         })
             .then(function (response) {
-                console.log(response);
                 setTimeout(() => self.props.closeSnackbar(cKey), 500);
 
                 // @TODO validate response.
                 let newFolder = response.data.data;
+                newFolder = {
+                    ...newFolder,
+                    id: hashFnv32a(newFolder.name) + Math.random(),
+                    level: folder.level + 1,
+                };
 
-                if (active) {
-                    // Add children.
-                    // @TODO find a good way to add children.
-                    // temporary add directory to the root.
-                    self.props.addFolder({
-                        key: hashFnv32a(newFolder.name) + Math.random(),
-                        // @TODO add correct level.
-                        level: 0,
-                        ...newFolder,
-                    });
-                }
-                else {
-                    self.props.addFolder({
-                        key: hashFnv32a(newFolder.name) + Math.random(),
-                        // @TODO add correct level.
-                        level: 0,
-                        ...newFolder,
-                    });
-                }
+                self.props.addFolder(newFolder);
+                self.props.addChild(folder.id, newFolder.id);
 
                 let msg = 'Folder has been created.';
                 self.props.enqueueSnackbar({
@@ -184,8 +167,7 @@ class AddFolderForm extends Component {
 
 const mapStateToProps = state => {
     return {
-        folders: state.tree.folders,
-        selected: state.selected.selected,
+        folder: state.tree[state.selected],
     };
 };
 
@@ -193,6 +175,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     enqueueSnackbar,
     closeSnackbar,
     addFolder,
+    addChild,
 }, dispatch);
 
 AddFolderForm.propTypes = {
