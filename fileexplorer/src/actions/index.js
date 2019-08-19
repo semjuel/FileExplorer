@@ -48,6 +48,7 @@ export const setSelected = id => {
 export const ADD_FOLDER = 'ADD_FOLDER';
 export const ADD_FOLDERS = 'ADD_FOLDERS';
 export const CHANGE_FOLDER_STATUS = 'CHANGE_FOLDER_STATUS';
+export const REFRESH_FOLDER = 'REFRESH_FOLDER';
 export const DELETE_FOLDER = 'DELETE_FOLDER';
 export const ADD_CHILD = 'ADD_CHILD';
 export const ADD_CHILDREN = 'ADD_CHILDREN';
@@ -55,7 +56,7 @@ export const REMOVE_CHILD = 'REMOVE_CHILD';
 export const REMOVE_CHILDREN = 'REMOVE_CHILDREN';
 
 export const addFolder = folder => {
-    const id = folder.id || hashFnv32a(folder.name) + Math.random();
+    const id = folder.id || hashFnv32a(folder.path + folder.name);
 
     return {
         type: ADD_FOLDER,
@@ -78,6 +79,12 @@ export const changeFolderStatus = (id, open, loading) => ({
     id,
     open,
     loading,
+});
+
+export const refreshFolder = (id, status) => ({
+    type: REFRESH_FOLDER,
+    id,
+    status,
 });
 
 export const deleteFolder = (id) => ({
