@@ -1,5 +1,6 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import React, {Component} from 'react';
+import axios from "axios";
+import {makeStyles, withStyles} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
@@ -17,10 +18,17 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import Divider from '@material-ui/core/Divider';
 import AddFolderForm from "../AddFolderForm/AddFolderForm";
 import Dialog from "@material-ui/core/Dialog";
+import {connect} from "react-redux";
+import {bindActionCreators} from "redux";
+import {showModal} from "../../actions";
+import {hashFnv32a} from "../../services/hash";
+import {Markup} from "interweave";
+import Button from "@material-ui/core/Button";
+import Modal from "../Modal/Modal";
 
-const useStyles = makeStyles(theme => ({
+const styles = theme => ({
     bar: {
-      background: '#fff',
+        background: '#fff',
         color: '#000',
         zIndex: 1,
     },
@@ -37,80 +45,154 @@ const useStyles = makeStyles(theme => ({
             color: '#006AFE',
         }
     },
-}));
+});
 
+class Header extends Component {
+    constructor(props) {
+        super(props);
 
-export default function Header() {
-    const classes = useStyles();
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = () => {
-        setOpen(true);
+        this.handleOpen = this.handleOpen.bind(this);
+        this.handleRefresh = this.handleRefresh.bind(this);
+    }
+
+    handleOpen() {
+        this.props.showModal(true);
     };
 
-    const handleClose = () => {
-        setOpen(false);
+    handleRefresh() {
+        return;
+        if (this.props.folder.loading) {
+            return;
+        }
+
+        // @TODO move this to the service.
+        this.props.changeFolderStatus(this.props.selected, false, true);
+
+        // Remove children.
+        this.props.removeChildren(this.props.selected);
+
+        let self = this;
+        const path = this.props.folder.path;
+        // Make request.
+        axios.get('http://localhost:9195/admin/file-explorer/entry?mode=directory&depth=0&path=' + path)
+            .then(function (response) {
+                let data = response.data.data;
+                let childIds = [], children = [];
+                data.map(function (el) {
+                    el.id = hashFnv32a(el.path + el.name);
+                    el.level = self.props.folder.level + 1;
+                    childIds.push(el.id);
+                    children[el.id] = el;
+                });
+
+                // self.props.addChildren(self.props.folder.id, childIds);
+                // self.props.addFolders(children);
+
+                self.props.changeFolderStatus(self.props.id, true, false);
+            })
+            // @TODO handle this correctly.
+            .catch(function (error) {
+                console.log(error);
+                let msg = 'Failed fetching data.';
+                if (error.response && error.response.data) {
+                    msg = msg + ' ' + error.response.data.message;
+                }
+
+                self.props.enqueueSnackbar({
+                    message: <Markup content={msg} />,
+                    options: {
+                        key: new Date().getTime() + Math.random(),
+                        variant: 'error',
+                        action: key => (
+                            <Button onClick={() => self.props.closeSnackbar(key)}>dissmiss me</Button>
+                        ),
+                    },
+                });
+
+                self.props.changeFolderStatus(self.props.id, true, false);
+            });
     };
 
-    return (
-        <AppBar className={classes.bar} position="fixed">
-            <Toolbar>
-                <Typography
-                    variant="h5"
-                    noWrap
-                >
-                    FileExplorer
-                </Typography>
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+        if (nextState.open === true) {
+            return true;
+        }
 
-                <div className={classes.grow} />
+        return false;
+    }
 
-                <Divider className={classes.divider} />
+    render() {
+        const { classes } = this.props;
+        console.log('Render header');
 
-                <IconButton className={classes.icon} aria-label="Refresh" disabled>
-                    <RefreshIcon />
-                </IconButton>
+        return (
+            <AppBar className={classes.bar} position="fixed">
+                <Toolbar>
+                    <Typography
+                        variant="h5"
+                        noWrap
+                    >
+                        FileExplorer
+                    </Typography>
 
-                <IconButton className={classes.icon} aria-label="Upload File" disabled>
-                    <UploadIcon />
-                </IconButton>
+                    <div className={classes.grow} />
 
-                <IconButton className={classes.icon} onClick={handleOpen} aria-label="New Folder">
-                    <NewFolderIcon />
-                </IconButton>
+                    <Divider className={classes.divider} />
 
-                <IconButton className={classes.icon} aria-label="File Copy" disabled>
-                    <FileCopyIcon />
-                </IconButton>
+                    <IconButton className={classes.icon} onClick={this.handleRefresh} disabled aria-label="Refresh">
+                        <RefreshIcon />
+                    </IconButton>
 
-                <IconButton className={classes.icon} aria-label="Rename" disabled>
-                    <RenameIcon />
-                </IconButton>
+                    <IconButton className={classes.icon} aria-label="Upload File" disabled>
+                        <UploadIcon />
+                    </IconButton>
 
-                <IconButton className={classes.icon} aria-label="Delete" disabled>
-                    <DeleteIcon />
-                </IconButton>
+                    <IconButton className={classes.icon} onClick={this.handleOpen} aria-label="New Folder">
+                        <NewFolderIcon />
+                    </IconButton>
+
+                    <IconButton className={classes.icon} aria-label="File Copy" disabled>
+                        <FileCopyIcon />
+                    </IconButton>
+
+                    <IconButton className={classes.icon} aria-label="Rename" disabled>
+                        <RenameIcon />
+                    </IconButton>
+
+                    <IconButton className={classes.icon} aria-label="Delete" disabled>
+                        <DeleteIcon />
+                    </IconButton>
 
 
-                <Divider className={classes.divider} />
+                    <Divider className={classes.divider} />
 
-                <IconButton className={classes.icon} aria-label="Switch view" disabled>
-                    <ViewGridIcon />
-                </IconButton>
-                <IconButton className={classes.icon} aria-label="Switch view" disabled>
-                    <ViewListIcon />
-                </IconButton>
-                <IconButton className={classes.icon} aria-label="Settings" disabled>
-                    <SettingsIcon />
-                </IconButton>
-                <IconButton className={classes.icon} aria-label="File information" disabled>
-                    <InfoIcon />
-                </IconButton>
+                    <IconButton className={classes.icon} aria-label="Switch view" disabled>
+                        <ViewGridIcon />
+                    </IconButton>
+                    <IconButton className={classes.icon} aria-label="Switch view" disabled>
+                        <ViewListIcon />
+                    </IconButton>
+                    <IconButton className={classes.icon} aria-label="Settings" disabled>
+                        <SettingsIcon />
+                    </IconButton>
+                    <IconButton className={classes.icon} aria-label="File information" disabled>
+                        <InfoIcon />
+                    </IconButton>
 
-            </Toolbar>
-
-            {/* @TODO review this - duplicated code */}
-            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-                <AddFolderForm close={handleClose} />
-            </Dialog>
-        </AppBar>
-    );
+                </Toolbar>
+            </AppBar>
+        );
+    }
 }
+
+const mapStateToProps = state => {
+    return {
+        modalStatus: state.modalStatus,
+    };
+};
+
+const mapDispatchToProps = dispatch => bindActionCreators({
+    showModal,
+}, dispatch);
+
+export default connect(null, mapDispatchToProps)(withStyles(styles)(Header));

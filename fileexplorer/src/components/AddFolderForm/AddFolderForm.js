@@ -84,7 +84,7 @@ class AddFolderForm extends Component {
                 let newFolder = response.data.data;
                 newFolder = {
                     ...newFolder,
-                    id: hashFnv32a(newFolder.name) + Math.random(),
+                    id: hashFnv32a(newFolder.path + newFolder.name),
                     level: folder.level + 1,
                 };
 

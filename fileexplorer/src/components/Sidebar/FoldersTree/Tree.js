@@ -93,7 +93,7 @@ export class Tree extends Component {
                 let data = response.data.data;
                 let childIds = [], children = [];
                 data.map(function (el) {
-                    el.id = hashFnv32a(el.name) + Math.random();
+                    el.id = hashFnv32a(el.path + el.name);
                     el.level = self.props.folder.level + 1;
                     childIds.push(el.id);
                     children[el.id] = el;
@@ -127,6 +127,11 @@ export class Tree extends Component {
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {
+        // Don't update component in case of loading status.
+        if (nextProps.folder.loading === true && this.props.folder.loading === true) {
+            return false;
+        }
+
         return nextProps.folder.open != this.props.folder.open ||
             nextProps.folder.loading != this.props.folder.loading ||
             this.props.folder.id == nextProps.selected ||
@@ -137,6 +142,7 @@ export class Tree extends Component {
     render() {
         const { name, childIds, open, loading } = this.props.folder;
         const { parentId, selected, id, styling } = this.props;
+        console.log(name);
 
         return (
             <React.Fragment>
