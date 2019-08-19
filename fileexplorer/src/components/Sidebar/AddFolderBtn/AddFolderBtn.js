@@ -1,13 +1,14 @@
-import React from 'react';
-import {makeStyles} from "@material-ui/core";
+import React, {Component} from 'react';
+import { withStyles} from "@material-ui/core";
 import NewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import Button from "@material-ui/core/Button";
-import Dialog from '@material-ui/core/Dialog';
 
 import Aux from '../../../hoc/Aux';
-import AddFolderForm from '../../AddFolderForm/AddFolderForm';
+import {connect} from "react-redux";
+import {bindActionCreators} from "redux";
+import {showModal} from "../../../actions";
 
-const useStyles = makeStyles(theme => ({
+const styles = theme => ({
     button: {
         margin: theme.spacing(5, 3, 2),
         background: '#008CFE',
@@ -20,31 +21,34 @@ const useStyles = makeStyles(theme => ({
     leftIcon: {
         marginRight: theme.spacing(1),
     },
-}));
+});
 
+class AddFolderBtn extends Component {
+    constructor(props) {
+        super(props);
 
-export default function AddFolderBtn( props ) {
-    const classes = useStyles();
-    const [open, setOpen] = React.useState(false);
+        this.handleOpen = this.handleOpen.bind(this);
+    }
 
-    const handleOpen = () => {
-        setOpen(true);
+    handleOpen() {
+        this.props.showModal(true);
     };
+        render() {
+        const { classes } = this.props;
 
-    const handleClose = () => {
-        setOpen(false);
-    };
-
-    return (
-        <Aux>
-            <Button size="large" variant="contained" className={classes.button} onClick={handleOpen}>
-                <NewFolderIcon className={classes.leftIcon} />
-                Add folder
-            </Button>
-
-            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-                <AddFolderForm close={handleClose} />
-            </Dialog>
-        </Aux>
-    );
+        return (
+            <Aux>
+                <Button size="large" variant="contained" className={classes.button} onClick={this.handleOpen}>
+                    <NewFolderIcon className={classes.leftIcon} />
+                    Add folder
+                </Button>
+            </Aux>
+        );
+    }
 }
+
+const mapDispatchToProps = dispatch => bindActionCreators({
+    showModal,
+}, dispatch);
+
+export default connect(null, mapDispatchToProps)(withStyles(styles)(AddFolderBtn));

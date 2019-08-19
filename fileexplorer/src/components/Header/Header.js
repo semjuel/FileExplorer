@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import axios from "axios";
-import {makeStyles, withStyles} from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
@@ -16,15 +16,12 @@ import RenameIcon from '@material-ui/icons/Edit';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Divider from '@material-ui/core/Divider';
-import AddFolderForm from "../AddFolderForm/AddFolderForm";
-import Dialog from "@material-ui/core/Dialog";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import {showModal} from "../../actions";
 import {hashFnv32a} from "../../services/hash";
 import {Markup} from "interweave";
 import Button from "@material-ui/core/Button";
-import Modal from "../Modal/Modal";
 
 const styles = theme => ({
     bar: {
@@ -113,17 +110,8 @@ class Header extends Component {
             });
     };
 
-    shouldComponentUpdate(nextProps, nextState, nextContext) {
-        if (nextState.open === true) {
-            return true;
-        }
-
-        return false;
-    }
-
     render() {
         const { classes } = this.props;
-        console.log('Render header');
 
         return (
             <AppBar className={classes.bar} position="fixed">
@@ -184,12 +172,6 @@ class Header extends Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    return {
-        modalStatus: state.modalStatus,
-    };
-};
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     showModal,
