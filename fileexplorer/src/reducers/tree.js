@@ -1,4 +1,4 @@
-import { ADD_CHILD, ADD_CHILDREN, REMOVE_CHILD, ADD_FOLDER, ADD_FOLDERS, DELETE_FOLDER, CHANGE_FOLDER_STATUS } from '../actions'
+import { ADD_CHILD, ADD_CHILDREN, REMOVE_CHILD, REMOVE_CHILDREN, ADD_FOLDER, ADD_FOLDERS, DELETE_FOLDER, CHANGE_FOLDER_STATUS } from '../actions'
 
 const childIds = (state, action) => {
     switch (action.type) {
@@ -35,6 +35,14 @@ const tree = (state, action) => {
             return {
                 ...state,
                 childIds: childIds(state.childIds || [], action)
+            };
+        case REMOVE_CHILDREN:
+            return {
+                ...state,
+                [action.id]: {
+                    ...state[action.id],
+                    childIds: [],
+                },
             };
         default:
             return state

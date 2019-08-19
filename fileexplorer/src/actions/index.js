@@ -1,5 +1,14 @@
 import {hashFnv32a} from "../services/hash";
 
+export const SHOW_MODAL = 'SHOW_MODAL';
+
+export const showModal = (modalStatus) => {
+    return {
+        type: SHOW_MODAL,
+        modalStatus: modalStatus,
+    };
+};
+
 export const ENQUEUE_SNACKBAR = 'ENQUEUE_SNACKBAR';
 export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';
 export const REMOVE_SNACKBAR = 'REMOVE_SNACKBAR';
@@ -43,6 +52,7 @@ export const DELETE_FOLDER = 'DELETE_FOLDER';
 export const ADD_CHILD = 'ADD_CHILD';
 export const ADD_CHILDREN = 'ADD_CHILDREN';
 export const REMOVE_CHILD = 'REMOVE_CHILD';
+export const REMOVE_CHILDREN = 'REMOVE_CHILDREN';
 
 export const addFolder = folder => {
     const id = folder.id || hashFnv32a(folder.name) + Math.random();
@@ -90,5 +100,10 @@ export const addChildren = (id, childIds) => ({
 export const removeChild = (id, childId) => ({
     type: REMOVE_CHILD,
     id,
-    childId
+    childId,
+});
+
+export const removeChildren = (id) => ({
+    type: REMOVE_CHILDREN,
+    id,
 });
