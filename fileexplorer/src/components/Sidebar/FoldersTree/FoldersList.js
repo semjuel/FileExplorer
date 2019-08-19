@@ -33,7 +33,7 @@ class FoldersList extends Component {
                 let data = response.data.data;
                 let childIds = [], children = [];
                 data.map(function (el) {
-                    el.id = hashFnv32a(el.name) + Math.random();
+                    el.id = hashFnv32a(el.path + el.name);
                     el.level = 1;
                     childIds.push(el.id);
                     children[el.id] = el;
