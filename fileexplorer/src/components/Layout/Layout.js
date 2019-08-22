@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
 import Aux from '../../hoc/Aux';
-import Header from '../Header/Header';
+import Header from '../../containers/Header/Header';
 import Sidebar from "../Sidebar/Sidebar";
 
 const useStyles = makeStyles(theme => ({
