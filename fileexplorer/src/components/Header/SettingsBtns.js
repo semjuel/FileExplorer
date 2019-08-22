@@ -14,15 +14,7 @@ import ViewListIcon from '@material-ui/icons/ViewList';
 import ViewGridIcon from '@material-ui/icons/Apps';
 import DeleteIcon from '@material-ui/icons/Delete';
 import {bindActionCreators} from "redux";
-import {
-    addChildren,
-    addFolders, changeFolderStatus,
-    closeSnackbar, deleteFolder,
-    enqueueSnackbar,
-    refreshFolder,
-    removeChildren,
-    showModal
-} from "../../actions";
+import { changeViewMode } from "../../actions";
 import axios from "axios";
 import {hashFnv32a} from "../../services/hash";
 import {Markup} from "interweave";
@@ -37,18 +29,30 @@ const styles = theme => ({
 });
 
 class SettingsBtns extends Component {
+    constructor(props) {
+        super(props);
+
+        this.changeView = this.changeView.bind(this);
+    }
+
+    changeView() {
+        this.props.changeViewMode(!this.props.view);
+    }
 
     render() {
         const { classes } = this.props;
 
         return (
             <React.Fragment>
-                <IconButton className={classes.icon} aria-label="Switch view" disabled>
-                    <ViewGridIcon />
-                </IconButton>
-                <IconButton className={classes.icon} aria-label="Switch view" disabled>
-                    <ViewListIcon />
-                </IconButton>
+                {this.props.view ? (
+                    <IconButton className={classes.icon} onClick={this.changeView} aria-label="Switch view">
+                        <ViewGridIcon />
+                    </IconButton>
+                ) : (
+                    <IconButton className={classes.icon} onClick={this.changeView} aria-label="Switch view">
+                        <ViewListIcon />
+                    </IconButton>
+                )}
                 <IconButton className={classes.icon} aria-label="Settings" disabled>
                     <SettingsIcon />
                 </IconButton>
@@ -63,22 +67,12 @@ class SettingsBtns extends Component {
 
 function mapStateToProps(state, ownProps) {
     return  {
-        tree: state.tree,
-        folder: state.tree[state.selected],
-        selected: state.selected,
+        view: state.view,
     };
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    enqueueSnackbar,
-    closeSnackbar,
-    showModal,
-    refreshFolder,
-    removeChildren,
-    addFolders,
-    addChildren,
-    changeFolderStatus,
-    deleteFolder,
+    changeViewMode,
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(SettingsBtns));
