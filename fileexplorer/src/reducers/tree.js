@@ -47,21 +47,23 @@ const tree = (state, action) => {
         case REMOVE_CHILDREN:
             return {
                 ...state,
-                [action.id]: {
-                    ...state[action.id],
-                    childIds: [],
-                },
+                childIds: [],
             };
         default:
             return state
     }
 };
 
-const getAllDescendantIds = (state, nodeId) => (
-    state[nodeId].childIds.reduce((acc, childId) => (
+const getAllDescendantIds = (state, nodeId) => {
+    if (typeof state[nodeId] === 'undefined' ||
+        typeof state[nodeId].childIds === 'undefined') {
+        return [];
+    }
+
+    return  state[nodeId].childIds.reduce((acc, childId) => (
         [ ...acc, childId, ...getAllDescendantIds(state, childId) ]
-    ), [])
-);
+    ), []);
+};
 
 const deleteMany = (state, ids) => {
     state = { ...state };
@@ -78,7 +80,6 @@ let root = {
         type: 'directory',
         loading: true,
         open: false,
-        // childIds: [],
     }
 };
 export default (state = root, action) => {
