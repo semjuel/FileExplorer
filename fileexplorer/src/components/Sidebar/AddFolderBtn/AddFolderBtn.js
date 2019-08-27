@@ -3,7 +3,6 @@ import { withStyles} from "@material-ui/core";
 import NewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import Button from "@material-ui/core/Button";
 
-import Aux from '../../../hoc/Aux';
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import {showModal} from "../../../actions";
@@ -37,12 +36,12 @@ class AddFolderBtn extends Component {
         const { classes } = this.props;
 
         return (
-            <Aux>
+            <React.Fragment>
                 <Button size="large" variant="contained" className={classes.button} onClick={this.handleOpen}>
                     <NewFolderIcon className={classes.leftIcon} />
                     Add folder
                 </Button>
-            </Aux>
+            </React.Fragment>
         );
     }
 }
