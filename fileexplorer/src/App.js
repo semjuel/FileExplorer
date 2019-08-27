@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import Notifier from './components/Notifier/Notifier';
 import Layout from './components/Layout/Layout';
-import MainView from './containers/MainView/MainView';
+import MainView from './components/MainView/MainView';
 import Modal from './components/Modal/Modal';
 
 const App = () => {

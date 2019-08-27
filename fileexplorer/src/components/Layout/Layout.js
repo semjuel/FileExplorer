@@ -1,7 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
-import Aux from '../../hoc/Aux';
 import Header from '../../containers/Header/Header';
 import Sidebar from "../Sidebar/Sidebar";
 
@@ -13,12 +12,12 @@ const useStyles = makeStyles(theme => ({
         zIndex: theme.zIndex.drawer + 1,
     },
     mainWrapper: {
-
+        padding: '40px 24px 24px',
     },
     content: {
         flexGrow: 1,
-        padding: theme.spacing(3),
         background: '#E8F1F7',
+        height: '100vh'
     },
     toolbar: theme.mixins.toolbar,
     nested: {
@@ -30,7 +29,7 @@ export default function Layout( props ) {
     const classes = useStyles();
 
     return (
-        <Aux>
+        <React.Fragment>
             <Header />
 
             <div className={classes.root}>
@@ -43,6 +42,6 @@ export default function Layout( props ) {
                     </div>
                 </main>
             </div>
-        </Aux>
+        </React.Fragment>
     );
 }
