@@ -17,7 +17,8 @@ const useStyles = makeStyles(theme => ({
     content: {
         flexGrow: 1,
         background: '#E8F1F7',
-        height: '100vh'
+        height: '100%',
+        minHeight: '100vh',
     },
     toolbar: theme.mixins.toolbar,
     nested: {
