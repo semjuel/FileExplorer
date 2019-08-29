@@ -9,6 +9,8 @@ import SvgIcon from "@material-ui/core/SvgIcon";
 import Checkbox from "@material-ui/core/Checkbox";
 import Timestamp from "react-timestamp";
 import filesize from "filesize";
+import TableSortLabel from "@material-ui/core/TableSortLabel";
+import PropTypes from "prop-types";
 
 const styles = theme => ({
     table: {
@@ -26,11 +28,101 @@ const FolderIcon = (props) => (
     </SvgIcon>
 );
 
+const headRows = [
+    { id: 'name', numeric: false, disablePadding: false, label: 'Name' },
+    { id: 'size', numeric: true, disablePadding: false, label: 'Size' },
+    { id: 'modified', numeric: true, disablePadding: false, label: 'Modified' },
+    { id: 'created', numeric: true, disablePadding: false, label: 'Created' },
+];
+
+function desc(a, b, orderBy) {
+    if (b[orderBy] < a[orderBy]) {
+        return -1;
+    }
+    if (b[orderBy] > a[orderBy]) {
+        return 1;
+    }
+    return 0;
+}
+
+
 class TableView extends Component {
+    constructor(props) {
+        super(props);
+
+        this.tableHead = this.tableHead.bind(this);
+        this.handleRequestSort = this.handleRequestSort.bind(this);
+        this.stableSort = this.stableSort.bind(this);
+        this.getSorting = this.getSorting.bind(this);
+    }
+
+    state = {
+        order: 'asc',
+        orderBy: 'name',
+        selected: [],
+    };
+
+    setOrder(order) {
+        this.setState({order: order})
+    }
+    setOrderBy(by) {
+        this.setState({orderBy: by})
+    }
+
+    tableHead(props) {
+        const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+        const createSortHandler = property => event => {
+            onRequestSort(event, property);
+        };
+
+        return (
+            <TableHead>
+                <TableRow>
+                    {headRows.map(row => (
+                        <TableCell
+                            key={row.id}
+                            align={row.numeric ? 'right' : 'left'}
+                            padding={row.disablePadding ? 'none' : 'default'}
+                            sortDirection={orderBy === row.id ? order : false}
+                        >
+                            <TableSortLabel
+                                active={orderBy === row.id}
+                                direction={order}
+                                onClick={createSortHandler(row.id)}
+                            >
+                                {row.label}
+                            </TableSortLabel>
+                        </TableCell>
+                    ))}
+                </TableRow>
+            </TableHead>
+        );
+    }
+
+    handleRequestSort(event, property) {
+        const isDesc = this.state.orderBy === property && this.state.order === 'desc';
+        this.setOrder(isDesc ? 'asc' : 'desc');
+        this.setOrderBy(property);
+    }
+
+    stableSort(array, cmp) {
+        const stabilizedThis = array.map((el, index) => [el, index]);
+        stabilizedThis.sort((a, b) => {
+            const order = cmp(a[0], b[0]);
+            if (order !== 0) return order;
+            return a[1] - b[1];
+        });
+        return stabilizedThis.map(el => el[0]);
+    }
+
+    getSorting(order, orderBy) {
+        return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
+    }
 
     render() {
         console.log('Render TableView');
         const { classes, folders } = this.props;
+        const { order, orderBy } = this.state;
 
         return (
             <React.Fragment>
@@ -40,19 +132,10 @@ class TableView extends Component {
                     size={'small'}
                 >
                     {/*@TODO move TableHead ti another component*/}
-                    <TableHead>
-                        <TableRow>
-                            <TableCell className={classes.name}>
-                                Name
-                            </TableCell>
-                            <TableCell>Size</TableCell>
-                            <TableCell>Modified</TableCell>
-                            <TableCell>Created</TableCell>
-                        </TableRow>
-                    </TableHead>
+                    {this.tableHead({order: this.state.order, orderBy: this.state.orderBy, onRequestSort: this.handleRequestSort})}
                     <TableBody>
                     {
-                            folders.map((row) => {
+                        this.stableSort(folders, this.getSorting(order, orderBy)).map((row) => {
                                 return (
                                     <TableRow
                                         hover
@@ -64,7 +147,7 @@ class TableView extends Component {
                                             {row.name}
                                         </TableCell>
                                         <TableCell>
-                                            {row.type === 'directory' ? ("") : (filesize(row.size))}
+                                            {row.type === 'directory' ? (row.size) : (filesize(row.size))}
                                         </TableCell>
                                         <TableCell>
                                             <Timestamp date={row.modified} />
