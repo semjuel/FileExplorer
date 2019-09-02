@@ -89,7 +89,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     changeFolderStatus,
 }, dispatch);
 
-FoldersList.propTypes = {
+FoldersTree.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
