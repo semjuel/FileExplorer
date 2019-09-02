@@ -9,6 +9,7 @@ export const ADD_CHILD = 'ADD_CHILD';
 export const ADD_CHILDREN = 'ADD_CHILDREN';
 export const REMOVE_CHILD = 'REMOVE_CHILD';
 export const REMOVE_CHILDREN = 'REMOVE_CHILDREN';
+export const ADD_FILES_TO_FOLDER = 'ADD_FILES_TO_FOLDER';
 
 export const addFolder = folder => {
     const id = folder.id || hashFnv32a(folder.path + folder.name);
@@ -76,6 +77,12 @@ export const addChildren = (id, childIds) => ({
     type: ADD_CHILDREN,
     id,
     childIds,
+});
+
+export const addFilesToFolder = (id, fileIds) => ({
+    type: ADD_FILES_TO_FOLDER,
+    id,
+    fileIds,
 });
 
 export const removeChild = (id, childId) => ({

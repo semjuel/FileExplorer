@@ -1,5 +1,5 @@
 import { ADD_CHILD, ADD_CHILDREN, REMOVE_CHILD, REMOVE_CHILDREN,
-    ADD_FOLDER, ADD_FOLDERS, DELETE_FOLDER, CHANGE_FOLDER_STATUS, REFRESH_FOLDER } from '../actions'
+    ADD_FOLDER, ADD_FOLDERS, DELETE_FOLDER, CHANGE_FOLDER_STATUS, REFRESH_FOLDER, ADD_FILES_TO_FOLDER } from '../actions'
 
 const childIds = (state, action) => {
     switch (action.type) {
@@ -43,6 +43,11 @@ const tree = (state, action) => {
             return {
                 ...state,
                 childIds: childIds(state.childIds || [], action)
+            };
+        case ADD_FILES_TO_FOLDER:
+            return {
+                ...state,
+                fileIds: action.fileIds || []
             };
         case REMOVE_CHILDREN:
             return {
