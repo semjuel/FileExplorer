@@ -26,19 +26,6 @@ import {Markup} from "interweave";
 import Button from "@material-ui/core/Button";
 
 const styles = theme => ({
-    bar: {
-        background: '#fff',
-        color: '#000',
-        zIndex: 1,
-    },
-    grow: {
-        flexGrow: 1,
-    },
-    divider: {
-        margin: '0 20px',
-        width: '1px',
-        height: '50px',
-    },
     icon: {
         '&:hover': {
             color: '#006AFE',
