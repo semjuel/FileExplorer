@@ -14,27 +14,36 @@ class MainView extends Component {
 
     getFolders() {
         // @TODO find a better way.
-        let folders = [];
+        let folders = [], files = [];
         const self = this;
+
         const folder = this.props.folders[this.props.selected];
         if (typeof folder.childIds !== 'undefined' && folder && folder.childIds.length > 0) {
-            folder.childIds.map(function(index){
+            folder.childIds.map(function(index) {
                 if (self.props.folders[index]) {
                     folders.push(self.props.folders[index]);
                 }
             });
         }
 
-        return folders;
+        if (typeof folder.fileIds !== 'undefined' && folder && folder.fileIds.length > 0) {
+            folder.fileIds.map(function(index) {
+                if (self.props.files[index]) {
+                    files.push(self.props.files[index]);
+                }
+            });
+        }
+
+        return {folders, files};
     }
 
-    renderView(folders) {
+    renderView(folders, files) {
         return (
             this.props.view ? (
-                    <TableView folders={folders} />
+                    <TableView folders={folders} files={files} />
                 ) : (
                     <div>
-                        <TableView folders={folders} />
+                        <TableView folders={folders} files={files} />
                         {/*<GridView />*/}
                     </div>
                 )
@@ -42,11 +51,11 @@ class MainView extends Component {
     }
 
     render() {
-        const folders = this.getFolders();
+        const {folders, files} = this.getFolders();
 
         return (
             <React.Fragment>
-                { folders.length > 0 ? (this.renderView(folders)) : ("empty")}
+               { folders.length > 0 || files.length > 0 ? (this.renderView(folders, files)) : ("empty")}
             </React.Fragment>
         );
     }
@@ -56,6 +65,7 @@ function mapStateToProps(state, ownProps) {
     return  {
         view: state.view,
         folders: state.tree,
+        files: state.files,
         selected: state.selected,
     };
 }
