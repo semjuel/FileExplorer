@@ -5,9 +5,14 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 
-import ActionBtns from "../../components/Header/ActionBtns";
+import HeaderRefreshBtn from "./ActionBtns/HeaderRefreshBtn";
 import SettingsBtns from "../../components/Header/SettingsBtns";
 import Logo from '../Logo/Logo';
+import HeaderUploadBtn from "./ActionBtns/HeaderUploadBtn";
+import HeaderAddFolderBtn from "./ActionBtns/HeaderAddFolderBtn";
+import HeaderFileCopyBtn from "./ActionBtns/HeaderFileCopyBtn";
+import HeaderRenameBtn from "./ActionBtns/HeaderRenameBtn";
+import HeaderDeleteBtn from "./ActionBtns/HeaderDeleteBtn";
 
 const styles = theme => ({
     bar: {
@@ -33,6 +38,11 @@ const styles = theme => ({
         width: '50px',
         height: '50px',
     },
+    icon: {
+        '&:hover': {
+            color: '#006AFE',
+        }
+    },
 });
 
 
@@ -53,7 +63,17 @@ class Header extends Component {
 
                     <Divider className={classes.divider}  component='div'/>
 
-                    <ActionBtns />
+                    <HeaderRefreshBtn className={classes.icon} />
+
+                    <HeaderUploadBtn disabled className={classes.icon} />
+
+                    <HeaderAddFolderBtn className={classes.icon} />
+
+                    <HeaderFileCopyBtn disabled className={classes.icon} />
+
+                    <HeaderRenameBtn disabled className={classes.icon} />
+
+                    <HeaderDeleteBtn disabled className={classes.icon} />
 
                     <Divider className={classes.divider}  component='div'/>
 
