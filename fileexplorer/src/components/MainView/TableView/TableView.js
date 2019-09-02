@@ -6,6 +6,8 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableBody from "@material-ui/core/TableBody";
 import SvgIcon from "@material-ui/core/SvgIcon";
+import FileIcon from '@material-ui/icons/FileCopy';
+import TablePagination from '@material-ui/core/TablePagination';
 import Checkbox from "@material-ui/core/Checkbox";
 import Timestamp from "react-timestamp";
 import filesize from "filesize";
@@ -54,11 +56,14 @@ class TableView extends Component {
         this.handleRequestSort = this.handleRequestSort.bind(this);
         this.stableSort = this.stableSort.bind(this);
         this.getSorting = this.getSorting.bind(this);
+        this.handleChangePage = this.handleChangePage.bind(this);
     }
 
     state = {
         order: 'asc',
         orderBy: 'name',
+        page: 0,
+        rowsPerPage: 15,
         selected: [],
     };
 
@@ -119,23 +124,42 @@ class TableView extends Component {
         return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
     }
 
+    handleChangePage(event, newPage) {
+        this.setState({page: newPage});
+    }
+
     render() {
         console.log('Render TableView');
-        const { classes, folders } = this.props;
-        const { order, orderBy } = this.state;
+        const { classes, folders, files } = this.props;
+        const { order, orderBy, page, rowsPerPage } = this.state;
 
         return (
             <React.Fragment>
+                <TablePagination
+                    component="div"
+                    count={files.length + folders.length}
+                    rowsPerPage={15}
+                    page={page}
+                    backIconButtonProps={{
+                        'aria-label': 'previous page',
+                    }}
+                    nextIconButtonProps={{
+                        'aria-label': 'next page',
+                    }}
+                    onChangePage={this.handleChangePage}
+                />
                 <Table
                     className={classes.table}
                     aria-labelledby="tableTitle"
                     size={'small'}
                 >
-                    {/*@TODO move TableHead ti another component*/}
+                    {/*@TODO move TableHead to another component*/}
                     {this.tableHead({order: this.state.order, orderBy: this.state.orderBy, onRequestSort: this.handleRequestSort})}
                     <TableBody>
                     {
-                        this.stableSort(folders, this.getSorting(order, orderBy)).map((row) => {
+                        this.stableSort(folders, this.getSorting(order, orderBy))
+                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                            .map((row) => {
                                 return (
                                     <TableRow
                                         hover
@@ -159,8 +183,36 @@ class TableView extends Component {
                                 );
                             })
                     }
+                        {
+                            this.stableSort(files, this.getSorting(order, orderBy))
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((row) => {
+                                return (
+                                    <TableRow
+                                        hover
+                                        tabIndex={-1}
+                                        key={row.id}
+                                    >
+                                        <TableCell>
+                                            <FileIcon className={'folder-icon'} viewBox='0 0 27 23' />
+                                            {row.name}
+                                        </TableCell>
+                                        <TableCell>
+                                            {row.type === 'directory' ? (row.size) : (filesize(row.size))}
+                                        </TableCell>
+                                        <TableCell>
+                                            <Timestamp date={row.modified} />
+                                        </TableCell>
+                                        <TableCell>
+                                            <Timestamp date={row.created} />
+                                        </TableCell>
+                                    </TableRow>
+                                );
+                            })
+                        }
                     </TableBody>
                 </Table>
+
             </React.Fragment>
         );
     }
