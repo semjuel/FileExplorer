@@ -1,15 +1,12 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
-import Header from '../../containers/Header/Header';
-import Sidebar from "../Sidebar/Sidebar";
+import Header from '../Header/Header';
+import Sidebar from '../LeftSidebar/LeftSidebar';
 
 const useStyles = makeStyles(theme => ({
     root: {
         display: 'flex',
-    },
-    appBar: {
-        zIndex: theme.zIndex.drawer + 1,
     },
     mainWrapper: {
         padding: '40px 24px 24px',
@@ -21,9 +18,6 @@ const useStyles = makeStyles(theme => ({
         minHeight: '100vh',
     },
     toolbar: theme.mixins.toolbar,
-    nested: {
-        paddingLeft: theme.spacing(4),
-    },
 }));
 
 export default function Layout( props ) {
