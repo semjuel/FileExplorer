@@ -7,6 +7,7 @@ import Divider from "@material-ui/core/Divider";
 
 import ActionBtns from "../../components/Header/ActionBtns";
 import SettingsBtns from "../../components/Header/SettingsBtns";
+import Logo from '../Logo/Logo';
 
 const styles = theme => ({
     bar: {
@@ -22,6 +23,16 @@ const styles = theme => ({
         width: '1px',
         height: '50px',
     },
+    logoWrapper: {
+        width: '240px',
+        justifyContent: 'center',
+        display: 'flex',
+        alignItems: 'center',
+    },
+    logo: {
+        width: '50px',
+        height: '50px',
+    },
 });
 
 
@@ -33,20 +44,18 @@ class Header extends Component {
         return (
             <AppBar className={classes.bar} position="fixed">
                 <Toolbar>
-                    <Typography
-                        variant="h5"
-                        noWrap
-                    >
+                    <Typography className={classes.logoWrapper} variant="h5">
+                        <Logo viewBox='0 0 50 50' className={classes.logo} />
                         FileExplorer
                     </Typography>
 
                     <div className={classes.grow} />
 
-                    <Divider className={classes.divider} />
+                    <Divider className={classes.divider}  component='div'/>
 
                     <ActionBtns />
 
-                    <Divider className={classes.divider} />
+                    <Divider className={classes.divider}  component='div'/>
 
                     <SettingsBtns />
                 </Toolbar>
