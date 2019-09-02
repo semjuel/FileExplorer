@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 
 import AddFolderBtn from '../../components/LeftSidebar/AddFolderBtn/AddFolderBtn';
-import FoldersList from '../../components/LeftSidebar/FoldersTree/FoldersList';
+import FoldersTree from '../../components/LeftSidebar/FoldersTree/FoldersTree';
 
 const drawerWidth = 300;
 
@@ -36,7 +36,7 @@ export default function LeftSidebar() {
 
             <AddFolderBtn />
 
-            <FoldersList />
+            <FoldersTree />
 
         </Drawer>
     );

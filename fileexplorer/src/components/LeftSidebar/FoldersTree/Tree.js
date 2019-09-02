@@ -12,7 +12,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Collapse from "@material-ui/core/Collapse";
 import List from "@material-ui/core/List";
 import {bindActionCreators} from "redux";
-import {setSelected, changeFolderStatus, enqueueSnackbar, closeSnackbar, addFolders, addChildren} from "../../../actions";
+import {setSelected, changeFolderStatus, enqueueSnackbar, closeSnackbar, addFolders, addChildren, addFiles, addFilesToFolder} from "../../../actions";
 import {hashFnv32a} from "../../../services/hash";
 import {Markup} from "interweave";
 import Button from "@material-ui/core/Button";
@@ -87,6 +87,44 @@ export class Tree extends Component {
         this.props.changeFolderStatus(this.props.id, this.props.folder.open, true);
 
         const path = this.props.folder.path;
+
+        // Make request to get files in current folder.
+        let fileIds = [];
+        axios.get('http://localhost:9195/admin/file-explorer/entry?mode=file&depth=0&path=' + path)
+            .then(function (response) {
+                let data = response.data.data;
+
+                let files = [];
+                console.log(data);
+                data.map(function (el) {
+                    el.id = hashFnv32a(el.path);
+                    fileIds.push(el.id);
+                    files[el.id] = el;
+                });
+                self.props.addFiles(files);
+
+                // @TODO review this.
+                self.props.addFilesToFolder(self.props.id, fileIds);
+            })
+            .catch(function (error) {
+                console.log(error);
+                let msg = 'Failed fetching files.';
+                if (error.response && error.response.data) {
+                    msg = msg + ' ' + error.response.data.message;
+                }
+
+                self.props.enqueueSnackbar({
+                    message: <Markup content={msg} />,
+                    options: {
+                        key: new Date().getTime() + Math.random(),
+                        variant: 'error',
+                        action: key => (
+                            <Button onClick={() => self.props.closeSnackbar(key)}>dissmiss me</Button>
+                        ),
+                    },
+                });
+            });
+
         // Make request.
         axios.get('http://localhost:9195/admin/file-explorer/entry?mode=directory&depth=0&path=' + path)
             .then(function (response) {
@@ -94,6 +132,7 @@ export class Tree extends Component {
                 let childIds = [], children = [];
                 data.map(function (el) {
                     el.id = hashFnv32a(el.path + el.name);
+                    el.refresh = false;
                     el.level = self.props.folder.level + 1;
                     childIds.push(el.id);
                     children[el.id] = el;
@@ -121,12 +160,30 @@ export class Tree extends Component {
                 });
             })
             .then(function () {
+                // @TODO not sure that this code is always executing.
                 // Always executed.
                 self.props.changeFolderStatus(self.props.id, true, false);
             });
+
+
     }
 
-    shouldComponentUpdate(nextProps, nextState, nextContext) {
+    componentDidMount() {
+        console.log('componentDidMount');
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        console.log('componentDidUpdate');
+    }
+
+    /*shouldComponentUpdate(nextProps, nextState, nextContext) {
+        console.log('nextProps', nextProps);
+        console.log('nextState', nextState);
+        if (nextProps.folder.refresh) {
+            return true;
+        }
+
+        console.log('shouldComponentUpdate');
         // Don't update component in case of loading status.
         if (nextProps.folder.loading === true && this.props.folder.loading === true) {
             return false;
@@ -137,12 +194,12 @@ export class Tree extends Component {
             this.props.folder.id == nextProps.selected ||
             this.props.folder.id == this.props.selected ||
             nextProps.folder.childIds != this.props.folder.childIds;
-    }
+    }*/
 
     render() {
         const { name, childIds, open, loading } = this.props.folder;
         const { parentId, selected, id, styling } = this.props;
-        console.log(name);
+        // console.log('Render Tree: ', name);
 
         return (
             <React.Fragment>
@@ -195,6 +252,7 @@ export class Tree extends Component {
 function mapStateToProps(state, ownProps) {
     return  {
         folder: state.tree[ownProps.id],
+        files: state.files,
         selected: state.selected,
     };
 }
@@ -203,6 +261,8 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     enqueueSnackbar,
     closeSnackbar,
     addFolders,
+    addFiles,
+    addFilesToFolder,
     addChildren,
     setSelected,
     changeFolderStatus,

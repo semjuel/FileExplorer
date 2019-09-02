@@ -22,7 +22,7 @@ const itemStyle = {
     padding: '0 22px',
 };
 
-class FoldersList extends Component {
+class FoldersTree extends Component {
 
     componentDidMount() {
         let self = this;
@@ -93,4 +93,4 @@ FoldersList.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(FoldersList));
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(FoldersTree));
