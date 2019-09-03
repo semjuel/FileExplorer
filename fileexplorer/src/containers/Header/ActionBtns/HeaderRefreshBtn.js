@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import RefreshIcon from "@material-ui/icons/Refresh";
 import IconButton from "@material-ui/core/IconButton";
-import axios from "axios";
-import {hashFnv32a} from "../../../services/hash";
-import {Markup} from "interweave";
-import Button from "@material-ui/core/Button";
+// import axios from "axios";
+// import {hashFnv32a} from "../../../services/hash";
+// import {Markup} from "interweave";
+// import Button from "@material-ui/core/Button";
 
 class HeaderRefreshBtn extends Component {
 
