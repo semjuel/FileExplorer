@@ -13,14 +13,10 @@ import {hashFnv32a} from "../../../services/hash";
 import Tree from './Tree';
 
 const styles = theme => ({
-    nothing: {
-      fontStyle: 'italic',
+    item: {
+        padding: '2px 22px',
     }
 });
-
-const itemStyle = {
-    padding: '0 22px',
-};
 
 class FoldersTree extends Component {
 
@@ -28,7 +24,7 @@ class FoldersTree extends Component {
         let self = this;
         // @TODO add valid messages.
         // @TODO change request link.
-        axios.get('http://localhost:9195/admin/file-explorer/entry?mode=directory&depth=0')
+        axios.get('http://localhost:9195/admin/file-explorer/entry?mode=directory1&depth=0')
             .then(function (response) {
                 let data = response.data.data;
                 let childIds = [], children = [];
@@ -63,6 +59,8 @@ class FoldersTree extends Component {
     }
 
     render() {
+        const { classes } = this.props;
+
         return (
             <Fragment>
                 <List
@@ -70,7 +68,7 @@ class FoldersTree extends Component {
                     aria-labelledby="nested-list-subheader"
                     dense={true}
                 >
-                    <Tree id={0} styling={itemStyle}/>
+                    <Tree id={0} loading={true} open={false} className={classes.item}  />
                 </List>
             </Fragment>
         );
