@@ -13,14 +13,26 @@ const styles = theme => ({
     }
 });
 
+// @TODO move this to configs.
+const rootFolder = {
+    id: 0,
+    name: 'root',
+    level: 0,
+    path: '/',
+    type: 'directory',
+
+    // @TODO statuses to a constant.
+    // Add status property - possible values are: loading, open, close, refresh.
+    status: 'loading',
+};
+
 class FoldersTree extends Component {
 
     componentDidMount() {
-        this.props.fetchFolderData(this.props.folder);
+        this.props.fetchFolderData(rootFolder);
     }
 
     render() {
-        console.log('Render: FoldersTree');
         const { classes } = this.props;
 
         return (
@@ -30,19 +42,12 @@ class FoldersTree extends Component {
                     aria-labelledby="nested-list-subheader"
                     dense={true}
                 >
-                    <TestTree folder={this.props.folder} id={0} className={classes.item}  />
+                    <TestTree id={0} className={classes.item}  />
                 </List>
             </Fragment>
         );
     }
 }
-
-function mapStateToProps(state, ownProps) {
-    return  {
-        folder: state.tree[0],
-    };
-}
-
 
 const mapDispatchToProps = (dispatch) => {
     return {
@@ -54,4 +59,4 @@ FoldersTree.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(FoldersTree));
+export default connect(null, mapDispatchToProps)(withStyles(styles)(FoldersTree));
