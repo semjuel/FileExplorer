@@ -1,4 +1,4 @@
-import { ADD_CHILD, ADD_CHILDREN, REMOVE_CHILD, REMOVE_CHILDREN,
+import { ADD_CHILD, ADD_CHILDREN, REMOVE_CHILD, REMOVE_CHILDREN, UPDATE_FOLDER_DATA,
     ADD_FOLDER, ADD_FOLDERS, DELETE_FOLDER, CHANGE_FOLDER_STATUS, REFRESH_FOLDER, ADD_FILES_TO_FOLDER } from '../actions'
 
 const childIds = (state, action) => {
@@ -6,6 +6,7 @@ const childIds = (state, action) => {
         case ADD_CHILD:
             return [ ...state, action.childId ];
         case ADD_CHILDREN:
+        case UPDATE_FOLDER_DATA:
             return [ ...state, ...action.childIds ];
         case REMOVE_CHILD:
             return state.filter(id => id !== action.childId);
@@ -49,6 +50,14 @@ const tree = (state, action) => {
                 ...state,
                 fileIds: action.fileIds || []
             };
+        case UPDATE_FOLDER_DATA:
+            return {
+                ...state,
+                childIds: childIds(state.childIds || [], action),
+                fileIds: action.fileIds || [],
+                // @TODO create statuses constant.
+                status: action.status || 'open',
+            };
         case REMOVE_CHILDREN:
             return {
                 ...state,
@@ -83,8 +92,10 @@ let root = {
         level: 0,
         path: '/',
         type: 'directory',
-        loading: true,
-        open: false,
+
+        // @TODO statuses to a constant.
+        // Add status property - possible values are: loading, open, close, refresh.
+        status: 'loading',
     }
 };
 export default (state = root, action) => {
