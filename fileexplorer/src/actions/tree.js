@@ -82,11 +82,10 @@ export const addFolders = folders => {
     };
 };
 
-export const changeFolderStatus = (id, open, loading) => ({
+export const changeFolderStatus = (id, status) => ({
     type: CHANGE_FOLDER_STATUS,
     id,
-    open,
-    loading,
+    status,
 });
 
 export const refreshFolder = (id, status) => ({

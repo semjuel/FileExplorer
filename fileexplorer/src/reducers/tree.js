@@ -24,8 +24,7 @@ const tree = (state, action) => {
         case CHANGE_FOLDER_STATUS:
             return {
                 ...state,
-                open: action.open,
-                loading: action.loading,
+                status: action.status,
             };
         case REFRESH_FOLDER:
             return {
