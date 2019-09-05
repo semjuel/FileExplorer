@@ -1,17 +1,13 @@
 import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from "@material-ui/core/styles"
 import { connect } from "react-redux";
 import List from '@material-ui/core/List';
 
 import { fetchFolderData } from "../../../actions";
-import TestTree from './TestTree';
+import ConnectedTree from './Tree';
 
-const styles = theme => ({
-    item: {
-        padding: '2px 22px',
-    }
-});
+const itemStyle = {
+    padding: '2px 22px',
+};
 
 // @TODO move this to configs.
 const rootFolder = {
@@ -33,8 +29,6 @@ class FoldersTree extends Component {
     }
 
     render() {
-        const { classes } = this.props;
-
         return (
             <Fragment>
                 <List
@@ -42,7 +36,7 @@ class FoldersTree extends Component {
                     aria-labelledby="nested-list-subheader"
                     dense={true}
                 >
-                    <TestTree id={0} className={classes.item}  />
+                    <ConnectedTree id={0} styling={itemStyle} />
                 </List>
             </Fragment>
         );
@@ -55,8 +49,4 @@ const mapDispatchToProps = (dispatch) => {
     };
 };
 
-FoldersTree.propTypes = {
-    classes: PropTypes.object.isRequired,
-};
-
-export default connect(null, mapDispatchToProps)(withStyles(styles)(FoldersTree));
+export default connect(null, mapDispatchToProps)(FoldersTree);

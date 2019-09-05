@@ -1,38 +1,56 @@
 import React from 'react'
 import { Component } from 'react'
-import axios from "axios";
-import { connect } from 'react-redux'
 import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
+import FolderIcon from '@material-ui/icons/Folder';
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
-import ListItemText from "@material-ui/core/ListItemText";
-import SvgIcon from "@material-ui/core/SvgIcon";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import IconButton from "@material-ui/core/IconButton";
+import SvgIcon from "@material-ui/core/SvgIcon";
 import Collapse from "@material-ui/core/Collapse";
 import List from "@material-ui/core/List";
 import {bindActionCreators} from "redux";
-import {setSelected, changeFolderStatus, enqueueSnackbar, closeSnackbar, addFolders, addChildren, addFiles, addFilesToFolder} from "../../../actions";
-import {hashFnv32a} from "../../../services/hash";
-import {Markup} from "interweave";
-import Button from "@material-ui/core/Button";
+import {
+    changeFolderStatus,
+    fetchFolderData,
+    setSelected,
+} from "../../../actions";
+import {connect} from "react-redux";
+import {withStyles} from "@material-ui/core";
 
+// @TODO remove style.css
 import "./style.css";
 
-const itemIconStyle = {
-    minWidth: '30px',
-};
-
-const moreIconStyle = {
-    width: '12px',
-    height: '12px',
-};
-
-const FolderIcon = (props) => (
-    <SvgIcon {...props}>
-        <path d="M27 8L27 21C27 22.05 26.16 23 25 23L3 23C1.84 23 1 22.05 1 21L1 3C1 2.07 1.98 1 3 1L9 1C10.02 1 11 2.07 11 3L11 6L25 6C26.16 6 27 6.95 27 8Z"/>
-    </SvgIcon>
-);
+const styles = theme => ({
+    listItem: {
+        color: 'rgba(0, 0, 0, 0.65)',
+        '&:hover': {
+            color: '#222222',
+        },
+    },
+    name: {
+        padding: '2px 0',
+    },
+    progress: {
+        padding: '12px',
+    },
+    moreIcon: {
+        width: '12px',
+        height: '12px',
+    },
+    itemIcon: {
+        minWidth: '30px',
+    },
+    folderIcon: {
+        fill: '#bbccd8',
+        stroke: '#70818c',
+        strokeWidth: '1.5px',
+        width: '1.2em',
+        height: '1.2em',
+    },
+});
 
 const PlusIcon = (props) => (
     <SvgIcon {...props}>
@@ -52,6 +70,9 @@ export class Tree extends Component {
         super(props);
 
         this.handleItemClick = this.handleItemClick.bind(this);
+        this.handlePlusClick = this.handlePlusClick.bind(this);
+        this.handleMinusClick = this.handleMinusClick.bind(this);
+        this.handleItemDoubleClick = this.handleItemDoubleClick.bind(this);
     }
 
     static getNestedStyle(level) {
@@ -59,184 +80,116 @@ export class Tree extends Component {
         return {
             paddingLeft: p + 'px',
             paddingRight: '22px',
+            paddingTop: '2px',
+            paddingBottom: '2px',
         };
     }
 
+    handleItemClick() {
+        const { folder } = this.props;
+        if (typeof folder.childIds === 'undefined') {
+            // Make request to get folder data.
+            this.props.changeFolderStatus(folder.id, 'loading');
+            this.props.fetchFolderData(folder);
+        }
+
+        // Make folder selected.
+        this.props.setSelected(folder.id);
+    }
+
+    handleItemDoubleClick() {
+        const { folder } = this.props;
+        if (folder.status === 'open') {
+            this.handleMinusClick();
+        }
+        else if (folder.status === 'close') {
+            this.handlePlusClick();
+        }
+    }
+
+    handlePlusClick() {
+        const { folder } = this.props;
+        if (typeof folder.childIds === 'undefined') {
+            // Make request to get folder data.
+            this.props.changeFolderStatus(folder.id, 'loading');
+            this.props.fetchFolderData(folder);
+        }
+        else if (folder.status === 'open' && folder.childIds.length > 0) {
+            this.props.changeFolderStatus(folder.id, 'close');
+        }
+    }
+
+    handleMinusClick() {
+        this.props.changeFolderStatus(this.props.folder.id, 'close');
+    }
+
     renderChild = childId => {
-        const { id, level } = this.props.folder;
+        const { level } = this.props.folder;
         return (
-            <ConnectedTree key={childId} id={childId} styling={Tree.getNestedStyle(level + 1)}  parentId={id} />
+            <ConnectedTree key={childId} id={childId} styling={Tree.getNestedStyle(level + 1)} />
         )
     };
 
-    handleItemClick() {
-        if (this.props.folder.loading) {
-            return;
-        }
-
-        this.props.setSelected(this.props.id);
-
-        // In case element has children - don't make request, just collapse children block.
-        if (typeof this.props.folder.childIds !== 'undefined' && this.props.folder.childIds.length > 0) {
-            this.props.changeFolderStatus(this.props.id, !this.props.folder.open, false);
-
-            return;
-        }
-
-        let self = this;
-        this.props.changeFolderStatus(this.props.id, this.props.folder.open, true);
-
-        const path = this.props.folder.path;
-
-        // Make request to get files in current folder.
-        let fileIds = [];
-        axios.get('http://localhost:9195/admin/file-explorer/entry?mode=file&depth=0&path=' + path)
-            .then(function (response) {
-                let data = response.data.data;
-
-                let files = [];
-                console.log(data);
-                data.map(function (el) {
-                    el.id = hashFnv32a(el.path);
-                    fileIds.push(el.id);
-                    files[el.id] = el;
-                });
-                self.props.addFiles(files);
-
-                // @TODO review this.
-                self.props.addFilesToFolder(self.props.id, fileIds);
-            })
-            .catch(function (error) {
-                console.log(error);
-                let msg = 'Failed fetching files.';
-                if (error.response && error.response.data) {
-                    msg = msg + ' ' + error.response.data.message;
-                }
-
-                self.props.enqueueSnackbar({
-                    message: <Markup content={msg} />,
-                    options: {
-                        key: new Date().getTime() + Math.random(),
-                        variant: 'error',
-                        action: key => (
-                            <Button onClick={() => self.props.closeSnackbar(key)}>dissmiss me</Button>
-                        ),
-                    },
-                });
-            });
-
-        // Make request.
-        axios.get('http://localhost:9195/admin/file-explorer/entry?mode=directory&depth=0&path=' + path)
-            .then(function (response) {
-                let data = response.data.data;
-                let childIds = [], children = [];
-                data.map(function (el) {
-                    el.id = hashFnv32a(el.path + el.name);
-                    el.refresh = false;
-                    el.level = self.props.folder.level + 1;
-                    childIds.push(el.id);
-                    children[el.id] = el;
-                });
-
-                self.props.addChildren(self.props.id, childIds);
-                self.props.addFolders(children);
-            })
-            // @TODO handle this correctly.
-            .catch(function (error) {
-                let msg = 'Failed fetching data.';
-                if (error.response && error.response.data) {
-                    msg = msg + ' ' + error.response.data.message;
-                }
-
-                self.props.enqueueSnackbar({
-                    message: <Markup content={msg} />,
-                    options: {
-                        key: new Date().getTime() + Math.random(),
-                        variant: 'error',
-                        action: key => (
-                            <Button onClick={() => self.props.closeSnackbar(key)}>dissmiss me</Button>
-                        ),
-                    },
-                });
-            })
-            .then(function () {
-                // @TODO not sure that this code is always executing.
-                // Always executed.
-                self.props.changeFolderStatus(self.props.id, true, false);
-            });
-
-
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+        return nextProps.folder.id === nextProps.selected ||
+        this.props.folder.id === this.props.selected;
     }
-
-    componentDidMount() {
-        console.log('componentDidMount');
-    }
-
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        console.log('componentDidUpdate');
-    }
-
-    /*shouldComponentUpdate(nextProps, nextState, nextContext) {
-        console.log('nextProps', nextProps);
-        console.log('nextState', nextState);
-        if (nextProps.folder.refresh) {
-            return true;
-        }
-
-        console.log('shouldComponentUpdate');
-        // Don't update component in case of loading status.
-        if (nextProps.folder.loading === true && this.props.folder.loading === true) {
-            return false;
-        }
-
-        return nextProps.folder.open != this.props.folder.open ||
-            nextProps.folder.loading != this.props.folder.loading ||
-            this.props.folder.id == nextProps.selected ||
-            this.props.folder.id == this.props.selected ||
-            nextProps.folder.childIds != this.props.folder.childIds;
-    }*/
 
     render() {
-        const { name, childIds, open, loading } = this.props.folder;
-        const { parentId, selected, id, styling } = this.props;
-        // console.log('Render Tree: ', name);
+        const { classes, styling, selected } = this.props;
+        const { id, name, status, childIds } = this.props.folder;
+
+        console.log('Render Tree: ', name);
 
         return (
             <React.Fragment>
-                <ListItem selected={selected === id} style={styling} className={'folder-tree'} onClick={this.handleItemClick} button component={'div'}>
-                    <ListItemIcon style={itemIconStyle}>
-                        <FolderIcon className={'folder-icon'} viewBox='0 0 27 23' />
+                <ListItem button component={'div'} style={styling} className={'folder-tree'}
+                          onClick={this.handleItemClick}
+                          onDoubleClick={this.handleItemDoubleClick}
+                          selected={selected === id}
+                >
+                    <ListItemIcon className={classes.itemIcon}>
+                        <FolderIcon className={'folder-icon'} /> {/* className={classes.folderIcon}*/}
                     </ListItemIcon>
 
                     <ListItemText primary={
                         <Tooltip title={name}>
-                            <Typography noWrap display={"block"} component="span">
+                            <Typography noWrap display={"block"} className={classes.name} component="span">
                                 {name}
                             </Typography>
                         </Tooltip>
                     } />
 
                     {
-                        ((childIds === undefined && !loading) || (!open && !loading)) ?
-                            (<PlusIcon style={moreIconStyle} viewBox='0 0 12 12' />) :
+                        status === 'close' ?
+                            (
+
+                                <IconButton onClick={this.handlePlusClick}>
+                                    <PlusIcon  className={classes.moreIcon} viewBox='0 0 12 12' />
+                                </IconButton>
+                            ) :
                             ('')
                     }
 
                     {
-                        typeof childIds !== 'undefined' && childIds.length > 0 && !loading && open ?
-                            (<MinusIcon style={moreIconStyle} viewBox='0 0 12 12' />) :
+                        status === 'open' && typeof childIds !== 'undefined' && childIds.length > 0 ?
+                            (
+                                <IconButton onClick={this.handleMinusClick}>
+                                    <MinusIcon className={classes.moreIcon} viewBox='0 0 12 12' />
+                                </IconButton>
+                            ) :
                             ('')
                     }
 
                     {
-                        loading ? (<CircularProgress size={12} />) :('')
+                        status === 'loading' ? (<CircularProgress className={classes.progress} size={12} />) :('')
                     }
                 </ListItem>
 
                 {
-                    typeof childIds !== 'undefined' && childIds.length > 0 && open ?
+                    typeof childIds !== 'undefined' && childIds.length > 0 && status === 'open' ?
                         (
-                            <Collapse in={open} timeout="auto" unmountOnExit>
+                            <Collapse in={true} timeout="auto" unmountOnExit>
                                 {<List dense={true} component="div" disablePadding>
                                     {childIds.map(this.renderChild)}
                                 </List>}
@@ -252,23 +205,16 @@ export class Tree extends Component {
 function mapStateToProps(state, ownProps) {
     return  {
         folder: state.tree[ownProps.id],
-        files: state.files,
         selected: state.selected,
     };
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    enqueueSnackbar,
-    closeSnackbar,
-    addFolders,
-    addFiles,
-    addFilesToFolder,
-    addChildren,
-    setSelected,
     changeFolderStatus,
+    fetchFolderData,
+    setSelected,
 }, dispatch);
 
-
-const ConnectedTree = connect(mapStateToProps, mapDispatchToProps)(Tree);
+const ConnectedTree = connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Tree));
 
 export default ConnectedTree

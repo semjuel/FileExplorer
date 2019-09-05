@@ -16,7 +16,7 @@ export const REMOVE_CHILDREN = 'REMOVE_CHILDREN';
 export const ADD_FILES_TO_FOLDER = 'ADD_FILES_TO_FOLDER';
 
 // @TODO move this to the configs.
-const getFoldersUrl = 'http://localhost:9195/admin/file-explorer/entry?mode=directory&depth=0';
+const getFoldersUrl = 'http://localhost:9195/admin/file-explorer/entry';
 const getFilesUrl = 'http://localhost:9195/admin/file-explorer/entry';
 
 export const fetchFolderData = folder => {
@@ -40,13 +40,14 @@ export const fetchFolderData = folder => {
                 dispatch(enqueueErrorSnackbar(error))
             });
 
-        const foldersPromise = axios.get(getFoldersUrl)
+        const foldersPromise = axios.get(getFoldersUrl + '?mode=directory&depth=0&path=' + folder.path)
             .then(response => {
                 const data = response.data.data;
 
                 data.map(function (el) {
                     el.id = hashFnv32a(el.path + el.name);
                     el.level = folder.level + 1;
+                    el.status = 'close';
                     childIds.push(el.id);
                     children[el.id] = el;
                 });
