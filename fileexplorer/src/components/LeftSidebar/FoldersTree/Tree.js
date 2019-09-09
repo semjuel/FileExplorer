@@ -19,6 +19,7 @@ import {
 } from "../../../actions";
 import {connect} from "react-redux";
 import {withStyles} from "@material-ui/core";
+import TreeListItem from './TreeListItem';
 
 // @TODO remove style.css
 import "./style.css";
@@ -100,26 +101,37 @@ export class Tree extends Component {
     handleItemDoubleClick() {
         const { folder } = this.props;
         if (folder.status === 'open') {
-            this.handleMinusClick();
+            this.props.changeFolderStatus(this.props.folder.id, 'close');
         }
         else if (folder.status === 'close') {
-            this.handlePlusClick();
+            if (typeof folder.childIds === 'undefined') {
+                // Make request to get folder data.
+                this.props.changeFolderStatus(folder.id, 'loading');
+                this.props.fetchFolderData(folder);
+            }
+            else if (folder.childIds.length > 0) {
+                this.props.changeFolderStatus(folder.id, 'open');
+            }
         }
     }
 
-    handlePlusClick() {
+    handlePlusClick(e) {
+        e.stopPropagation();
+
         const { folder } = this.props;
+
         if (typeof folder.childIds === 'undefined') {
             // Make request to get folder data.
             this.props.changeFolderStatus(folder.id, 'loading');
             this.props.fetchFolderData(folder);
         }
-        else if (folder.status === 'open' && folder.childIds.length > 0) {
-            this.props.changeFolderStatus(folder.id, 'close');
+        else if (folder.childIds.length > 0 && folder.status === 'close') {
+            this.props.changeFolderStatus(folder.id, 'open');
         }
     }
 
-    handleMinusClick() {
+    handleMinusClick(e) {
+        e.stopPropagation();
         this.props.changeFolderStatus(this.props.folder.id, 'close');
     }
 
@@ -131,8 +143,12 @@ export class Tree extends Component {
     };
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {
-        return nextProps.folder.id === nextProps.selected ||
-        this.props.folder.id === this.props.selected;
+        const changeSeleceted = nextProps.folder.id === nextProps.selected ||
+            this.props.folder.id === this.props.selected;
+
+        const statusChanged = nextProps.folder.status !== this.props.folder.status;
+
+        return changeSeleceted || statusChanged;
     }
 
     render() {
@@ -143,48 +159,12 @@ export class Tree extends Component {
 
         return (
             <React.Fragment>
-                <ListItem button component={'div'} style={styling} className={'folder-tree'}
-                          onClick={this.handleItemClick}
-                          onDoubleClick={this.handleItemDoubleClick}
-                          selected={selected === id}
-                >
-                    <ListItemIcon className={classes.itemIcon}>
-                        <FolderIcon className={'folder-icon'} /> {/* className={classes.folderIcon}*/}
-                    </ListItemIcon>
-
-                    <ListItemText primary={
-                        <Tooltip title={name}>
-                            <Typography noWrap display={"block"} className={classes.name} component="span">
-                                {name}
-                            </Typography>
-                        </Tooltip>
-                    } />
-
-                    {
-                        status === 'close' ?
-                            (
-
-                                <IconButton onClick={this.handlePlusClick}>
-                                    <PlusIcon  className={classes.moreIcon} viewBox='0 0 12 12' />
-                                </IconButton>
-                            ) :
-                            ('')
-                    }
-
-                    {
-                        status === 'open' && typeof childIds !== 'undefined' && childIds.length > 0 ?
-                            (
-                                <IconButton onClick={this.handleMinusClick}>
-                                    <MinusIcon className={classes.moreIcon} viewBox='0 0 12 12' />
-                                </IconButton>
-                            ) :
-                            ('')
-                    }
-
-                    {
-                        status === 'loading' ? (<CircularProgress className={classes.progress} size={12} />) :('')
-                    }
-                </ListItem>
+                <TreeListItem {...this.props}
+                    onClick={this.handleItemClick}
+                    onDoubleClick={this.handleItemDoubleClick}
+                    handleMinusClick={this.handleMinusClick}
+                    handlePlusClick={this.handlePlusClick}
+                />
 
                 {
                     typeof childIds !== 'undefined' && childIds.length > 0 && status === 'open' ?
