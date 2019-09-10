@@ -42,8 +42,10 @@ class HeaderRefreshBtn extends Component {
     }
 
     render() {
+        const { folder, changeFolderStatus, fetchFolderData, deleteFolder, removeChildren, ...rest } = this.props;
+
         return (
-            <IconButton {...this.props} onClick={this.handleRefresh} aria-label="Refresh">
+            <IconButton {...rest} onClick={this.handleRefresh} aria-label="Refresh">
                 <RefreshIcon/>
             </IconButton>
         );
