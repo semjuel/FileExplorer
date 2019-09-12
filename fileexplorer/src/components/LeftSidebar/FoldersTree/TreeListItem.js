@@ -1,7 +1,8 @@
 import React, {Component} from "react";
 import { noop } from "../../../utils/utils";
 import ClickResolver from "../../../hoc/ClickResolver";
-import ListItem from "@material-ui/core/ListItem";import FolderIcon from '@material-ui/icons/Folder'
+import ListItem from "@material-ui/core/ListItem";
+import FolderIcon from '@material-ui/icons/Folder'
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
@@ -36,8 +37,9 @@ export class ClickableItem extends Component {
                       onDoubleClick={this.props.onDoubleClick}
                       selected={selected === id}
             >
+                {/* className={classes.folderIcon}*/}
                 <ListItemIcon className={classes.itemIcon}>
-                    <FolderIcon className={'folder-icon'} /> {/* className={classes.folderIcon}*/}
+                    <FolderIcon className={'folder-icon'} />
                 </ListItemIcon>
 
                 <ListItemText primary={

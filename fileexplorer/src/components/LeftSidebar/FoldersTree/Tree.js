@@ -1,16 +1,6 @@
 import React from 'react'
 import { Component } from 'react'
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import FolderIcon from '@material-ui/icons/Folder';
-import Tooltip from "@material-ui/core/Tooltip";
-import Typography from "@material-ui/core/Typography";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import IconButton from "@material-ui/core/IconButton";
 import SvgIcon from "@material-ui/core/SvgIcon";
-import Collapse from "@material-ui/core/Collapse";
-import List from "@material-ui/core/List";
 import {bindActionCreators} from "redux";
 import {
     changeFolderStatus,
@@ -20,6 +10,7 @@ import {
 import {connect} from "react-redux";
 import {withStyles} from "@material-ui/core";
 import TreeListItem from './TreeListItem';
+import Children from "./Children";
 
 // @TODO remove style.css
 import "./style.css";
@@ -135,13 +126,6 @@ export class Tree extends Component {
         this.props.changeFolderStatus(this.props.folder.id, 'close');
     }
 
-    renderChild = childId => {
-        const { level } = this.props.folder;
-        return (
-            <ConnectedTree key={childId} id={childId} styling={Tree.getNestedStyle(level + 1)} />
-        )
-    };
-
     shouldComponentUpdate(nextProps, nextState, nextContext) {
         const changeSeleceted = nextProps.folder.id === nextProps.selected ||
             this.props.folder.id === this.props.selected;
@@ -152,8 +136,8 @@ export class Tree extends Component {
     }
 
     render() {
-        const { classes, styling, selected } = this.props;
-        const { id, name, status, childIds } = this.props.folder;
+        const { classes, styling, selected, tree } = this.props;
+        const { id, name, status, childIds, level } = this.props.folder;
 
         console.log('Render Tree: ', name);
 
@@ -168,13 +152,7 @@ export class Tree extends Component {
 
                 {
                     typeof childIds !== 'undefined' && childIds.length > 0 && status === 'open' ?
-                        (
-                            <Collapse in={true} timeout="auto" unmountOnExit>
-                                {<List dense={true} component="div" disablePadding>
-                                    {childIds.map(this.renderChild)}
-                                </List>}
-                            </Collapse>
-                        ) :
+                        <Children level={level} childIds={childIds} /> :
                         ('')
                 }
             </React.Fragment>
@@ -186,6 +164,7 @@ function mapStateToProps(state, ownProps) {
     return  {
         folder: state.tree[ownProps.id],
         selected: state.selected,
+        tree: state.tree,
     };
 }
 
