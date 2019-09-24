@@ -7,11 +7,21 @@ import ButtonBase from '@material-ui/core/ButtonBase';
 import {connect} from "react-redux";
 
 import {withStyles} from "@material-ui/core";
+import Tooltip from "@material-ui/core/Tooltip";
 
 
 const styles = theme => ({
     grid: {
 
+    },
+    iconWrap: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: '0.5em',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     folderIcon: {
         height: '3em',
@@ -24,11 +34,9 @@ const styles = theme => ({
 
     },
     btn: {
-        width: '100%',
-    },
-
-    image: {
         position: 'relative',
+        width: '100%',
+        height: '9em',
         '&:hover, &$focusVisible': {
             zIndex: 1,
             '& $backdrop': {
@@ -40,6 +48,9 @@ const styles = theme => ({
             },
             '& $imageTitle': {
                 border: '4px solid currentColor',
+            },
+            '& $folderIcon': {
+                stroke: '#222222',
             },
         },
     },
@@ -56,28 +67,51 @@ const styles = theme => ({
         zIndex: '-1',
         borderRadius: '7px',
     },
+    name: {
+        position: 'absolute',
+        left: '0.5em',
+        right: '0.5em',
+        height: '3.5em',
+        bottom: '0.5em',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
 });
 
 class GridView extends Component {
 
     renderChild = child => {
         const { classes } = this.props;
+
+        const showTooltip = (child.name.length > 3);
+
         return (
             <Grid item xs={2} className={classes.grid}>
                 <ButtonBase
                     focusRipple
                     key={child.name}
-                    className={classes.image}
+                    className={classes.btn}
                     focusVisibleClassName={classes.focusVisible}
-                    style={{
-                        width: '100%',
-                    }}
                 >
                     <span className={classes.backdrop} />
-                    <FolderIcon className={classes.folderIcon} />
-                    <div className={classes.folderName}>
-                        {child.name}
-                    </div>
+                    <span className={classes.iconWrap}>
+                        <FolderIcon className={classes.folderIcon} />
+                    </span>
+                    <span className={classes.name}>
+                        {
+                            showTooltip
+                                ? <Tooltip title={child.name}>
+                                    <Typography noWrap display={"block"} component="span">
+                                        {child.name}
+                                    </Typography>
+                                </Tooltip>
+                                : <Typography noWrap display={"block"} component="span">
+                                    {child.name}
+                                </Typography>
+                        }
+
+                    </span>
                 </ButtonBase>
 
             </Grid>
