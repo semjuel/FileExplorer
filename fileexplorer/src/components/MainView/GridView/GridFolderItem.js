@@ -10,8 +10,8 @@ import ButtonBase from "@material-ui/core/ButtonBase";
 
 export class ClickableFolderItem extends Component {
     render() {
-
-        const { index, classes, child, showTooltip } = this.props;
+        const activeStyle = {background: 'black'};
+        const { index, classes, child, showTooltip, activeIndex } = this.props;
         console.log('render ClickableFolderItem', index);
         return (
             <Grid item xs={2} className={classes.grid}>
@@ -22,6 +22,7 @@ export class ClickableFolderItem extends Component {
                     key={child.id}
                     className={classes.btn}
                     focusVisibleClassName={classes.focusVisible}
+                    style={index === activeIndex ? activeStyle : null}
                 >
                     <span className={classes.backdrop} />
                     <span className={classes.iconWrap}>

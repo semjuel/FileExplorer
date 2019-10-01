@@ -20,6 +20,7 @@ const styles = theme => ({
 class GridSectionTitle extends Component {
 
     render() {
+        console.log('Render GridSectionTitle');
         const { classes, title } = this.props;
         return (
             <Grid item xs={9} className={classes.headingWrapper}>

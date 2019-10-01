@@ -93,21 +93,16 @@ class GridView extends Component {
         folderPage: 0,
         filePage: 0,
         rowsPerPage: 25,
+        activeIndex: null,
+        activeType: null,
     };
 
 
     handleFolderClick(id) {
-        console.log('handleItemClick', id);
-        const folder = this.props.folders[id];
-        /*const { folder } = this.props;
-        if (typeof folder.childIds === 'undefined') {
-            // Make request to get folder data.
-            this.props.changeFolderStatus(folder.id, 'loading');
-            this.props.fetchFolderData(folder);
-        }
-
-        // Make folder selected.
-        this.props.setSelected(folder.id);*/
+        this.setState({
+            activeIndex: id,
+            activeType: 'folder',
+        });
     }
 
     handleFolderDoubleClick(id) {
@@ -123,7 +118,10 @@ class GridView extends Component {
     }
 
     handleFileClick(id) {
-        console.log('handleFileClick');
+        this.setState({
+            activeIndex: id,
+            activeType: 'file',
+        });
     }
 
     handleFileDoubleClick(id) {
@@ -139,8 +137,8 @@ class GridView extends Component {
     }
 
     renderFolder = (folder, index) => {
+        const { activeIndex, activeType } = this.state;
         const { classes } = this.props;
-
         const showTooltip = (folder.name.length > 30);
 
         return (
@@ -152,13 +150,14 @@ class GridView extends Component {
                 onDoubleClick={this.handleFolderDoubleClick}
                 child={folder}
                 showTooltip={showTooltip}
+                activeIndex={activeType === 'file' ? null : activeIndex}
             />
         )
     };
 
     renderFile = (file, index) => {
+        const { activeIndex, activeType } = this.state;
         const { classes } = this.props;
-
         const showTooltip = (file.name.length > 30);
 
         return (
@@ -170,6 +169,7 @@ class GridView extends Component {
                 onDoubleClick={this.handleFileDoubleClick}
                 child={file}
                 showTooltip={showTooltip}
+                activeIndex={activeType === 'folder' ? null : activeIndex}
             />
         )
     };
