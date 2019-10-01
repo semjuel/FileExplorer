@@ -20,7 +20,7 @@ const ClickResolver = WrappedComponent => {
 
         clearPendingPromises = () => this.pendingPromises.map(p => p.cancel());
 
-        handleClick = () => {
+        handleClick = (e) => {
             // Create the cancelable promise and add it to
             // the pending promises queue.
             const waitForClick = cancellablePromise(delay(300));
@@ -31,7 +31,7 @@ const ClickResolver = WrappedComponent => {
                     // if the promise wasn't cancelled, we execute
                     // the callback and remove it from the queue
                     this.removePendingPromise(waitForClick);
-                    this.props.onClick();
+                    this.props.onClick(e);
                 })
                 .catch(errorInfo => {
                     // rethrow the error if the promise wasn't
@@ -43,11 +43,11 @@ const ClickResolver = WrappedComponent => {
                 });
         };
 
-        handleDoubleClick = () => {
+        handleDoubleClick = (e) => {
             // all (click) pending promises are part of a
             // dblclick event so we cancel them
             this.clearPendingPromises();
-            this.props.onDoubleClick();
+            this.props.onDoubleClick(e);
         };
 
         render() {
