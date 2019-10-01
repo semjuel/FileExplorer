@@ -18,7 +18,7 @@ const styles = theme => ({
     bar: {
         background: '#fff',
         color: '#000',
-        zIndex: 1,
+        zIndex: 2,
     },
     grow: {
         flexGrow: 1,
