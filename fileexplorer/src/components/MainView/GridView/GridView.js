@@ -1,14 +1,15 @@
 import React, {Component} from 'react';
-import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
-import FolderIcon from '@material-ui/icons/Folder'
-import ButtonBase from '@material-ui/core/ButtonBase';
 import {connect} from "react-redux";
 
 import {withStyles} from "@material-ui/core";
-import Tooltip from "@material-ui/core/Tooltip";
-
+import GridFolderItem from "./GridFolderItem";
+import GridFileItem from "./GridFileItem";
+import GridSectionTitle from "./GridSectionTitle";
+import GridSectionNav from "./GridSectionNav";
+import {bindActionCreators} from "redux";
+import {changeFolderStatus, fetchFolderData, setSelected} from "../../../actions";
 
 const styles = theme => ({
     grid: {
@@ -29,9 +30,6 @@ const styles = theme => ({
         fill: '#bbccd8',
         stroke: '#70818c',
         strokeWidth: '0.4px',
-    },
-    folderName: {
-
     },
     btn: {
         position: 'relative',
@@ -80,85 +78,202 @@ const styles = theme => ({
 });
 
 class GridView extends Component {
+    constructor(props) {
+        super(props);
 
-    renderChild = child => {
-        const { classes } = this.props;
-
-        const showTooltip = (child.name.length > 3);
-
-        return (
-            <Grid item xs={2} className={classes.grid}>
-                <ButtonBase
-                    focusRipple
-                    key={child.name}
-                    className={classes.btn}
-                    focusVisibleClassName={classes.focusVisible}
-                >
-                    <span className={classes.backdrop} />
-                    <span className={classes.iconWrap}>
-                        <FolderIcon className={classes.folderIcon} />
-                    </span>
-                    <span className={classes.name}>
-                        {
-                            showTooltip
-                                ? <Tooltip title={child.name}>
-                                    <Typography noWrap display={"block"} component="span">
-                                        {child.name}
-                                    </Typography>
-                                </Tooltip>
-                                : <Typography noWrap display={"block"} component="span">
-                                    {child.name}
-                                </Typography>
-                        }
-
-                    </span>
-                </ButtonBase>
-
-            </Grid>
-        )
+        this.handleFolderClick = this.handleFolderClick.bind(this);
+        this.handleFolderDoubleClick = this.handleFolderDoubleClick.bind(this);
+        this.handleFileClick = this.handleFileClick.bind(this);
+        this.handleFileDoubleClick = this.handleFileDoubleClick.bind(this);
+        this.handleChangeFolderPage = this.handleChangeFolderPage.bind(this);
+        this.handleChangeFilePage = this.handleChangeFilePage.bind(this);
     }
 
+    state = {
+        folderPage: 0,
+        filePage: 0,
+        rowsPerPage: 25,
+    };
+
+
+    handleFolderClick(id) {
+        console.log('handleItemClick', id);
+        const folder = this.props.folders[id];
+        /*const { folder } = this.props;
+        if (typeof folder.childIds === 'undefined') {
+            // Make request to get folder data.
+            this.props.changeFolderStatus(folder.id, 'loading');
+            this.props.fetchFolderData(folder);
+        }
+
+        // Make folder selected.
+        this.props.setSelected(folder.id);*/
+    }
+
+    handleFolderDoubleClick(id) {
+        const folder = this.props.folders[id];
+        if (typeof folder.childIds === 'undefined') {
+            // Make request to get folder data.
+            this.props.changeFolderStatus(folder.id, 'loading');
+            this.props.fetchFolderData(folder);
+        }
+
+        // Make folder selected.
+        this.props.setSelected(folder.id);
+    }
+
+    handleFileClick(id) {
+        console.log('handleFileClick');
+    }
+
+    handleFileDoubleClick(id) {
+        console.log('handleFileDoubleClick');
+    }
+
+    handleChangeFolderPage(event, newPage) {
+        this.setState({folderPage: newPage});
+    }
+
+    handleChangeFilePage(event, newPage) {
+        this.setState({filePage: newPage});
+    }
+
+    renderFolder = (folder, index) => {
+        const { classes } = this.props;
+
+        const showTooltip = (folder.name.length > 30);
+
+        return (
+            <GridFolderItem
+                key={index}
+                index={index}
+                classes={classes}
+                onClick={this.handleFolderClick}
+                onDoubleClick={this.handleFolderDoubleClick}
+                child={folder}
+                showTooltip={showTooltip}
+            />
+        )
+    };
+
+    renderFile = (file, index) => {
+        const { classes } = this.props;
+
+        const showTooltip = (file.name.length > 30);
+
+        return (
+            <GridFileItem
+                key={index}
+                index={index}
+                classes={classes}
+                onClick={this.handleFileClick}
+                onDoubleClick={this.handleFileDoubleClick}
+                child={file}
+                showTooltip={showTooltip}
+            />
+        )
+    };
+
     render() {
-        const { children } = this.props;
+        const { folders, files, classes } = this.props;
+        const { filePage, folderPage, rowsPerPage } = this.state;
 
         return (
             <React.Fragment>
-                <Typography component="h6" variant="h6">
-                    Folders
-                </Typography>
-                <Divider />
-                <Grid container spacing={3}
-                      alignItems="center">
-                    {
-                        children.map(this.renderChild)
-                    }
-                </Grid>
+                {
+                    folders.length > 0 ? (
+                        <React.Fragment>
+                            <Grid container spacing={3}>
+                                <GridSectionTitle title={'Folders'} />
 
-                <Typography component="h6" variant="h6">
-                    Files
-                </Typography>
-                <Divider />
+                                <GridSectionNav length={folders.length}
+                                                currentPage={folderPage}
+                                                handleOnChange={this.handleChangeFolderPage}
+                                />
+
+                                <Grid item xs={12}>
+                                    <Divider />
+                                </Grid>
+                            </Grid>
+
+                            <Grid container spacing={3}
+                                  alignItems="center">
+                                {
+                                    folders
+                                        .slice(folderPage * rowsPerPage, folderPage * rowsPerPage + rowsPerPage)
+                                        .map(this.renderFolder)
+                                }
+                            </Grid>
+                        </React.Fragment>
+                    ) : ('')
+                }
+
+                {
+                    files.length > 0 ? (
+                        <React.Fragment>
+                            <Grid container spacing={3}>
+                                <GridSectionTitle title={'Files'} />
+
+                                <GridSectionNav length={files.length}
+                                                currentPage={filePage}
+                                                handleOnChange={this.handleChangeFilePage}
+                                />
+
+                                <Grid item xs={12}>
+                                    <Divider />
+                                </Grid>
+                            </Grid>
+
+                            <Grid container spacing={3}
+                                  alignItems="center">
+                                {
+                                    files
+                                        .slice(filePage * rowsPerPage, filePage * rowsPerPage + rowsPerPage)
+                                        .map(this.renderFile)
+                                }
+                            </Grid>
+                        </React.Fragment>
+                    ) : ('')
+                }
             </React.Fragment>
+
         );
     }
 }
 
 function mapStateToProps(state, ownProps) {
-    let children = [];
-    const childIds = state.tree[state.selected].childIds;
+    let folders = [], files = [];
+    const folder = state.tree[state.selected];
+    const childIds = folder.childIds;
 
     if (typeof childIds !== 'undefined' && childIds.length > 0) {
         childIds.forEach((index) => {
-            children.push(state.tree[index]);
+            folders.push(state.tree[index]);
         });
 
         // Sort by name.
-        children.sort((a, b) => (a.name > b.name) ? 1 : -1);
+        folders.sort((a, b) => (a.name > b.name) ? 1 : -1);
+    }
+
+    if (typeof folder.fileIds !== 'undefined') {
+        folder.fileIds.map((index) => {
+            files.push(state.files[index]);
+        });
+
+        // Sort by name.
+        files.sort((a, b) => (a.name > b.name) ? 1 : -1);
     }
 
     return  {
-        children: children,
+        folders: folders,
+        files: files,
     };
 }
 
-export default connect(mapStateToProps, null)(withStyles(styles)(GridView));
+const mapDispatchToProps = dispatch => bindActionCreators({
+    changeFolderStatus,
+    fetchFolderData,
+    setSelected,
+}, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(GridView));
